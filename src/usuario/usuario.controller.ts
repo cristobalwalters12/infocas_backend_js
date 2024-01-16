@@ -6,9 +6,11 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto, UpdateUsuarioDto, LoginUserDto } from './dto/index';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('usuario')
 export class UsuarioController {
@@ -25,6 +27,7 @@ export class UsuarioController {
   }
 
   @Get()
+  @UseGuards(AuthGuard())
   findAll() {
     return this.usuarioService.findAll();
   }
