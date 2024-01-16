@@ -2,5 +2,5 @@
 
 export interface JwtPayload {
   correo: string;
-  contraseña: string;
+  contraseña?: string;
 }
