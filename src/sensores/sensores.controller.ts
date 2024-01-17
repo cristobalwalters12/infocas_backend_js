@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { SensoresService } from './sensores.service';
 import {
@@ -24,13 +25,13 @@ export class SensoresController {
   }
 
   @Post('/range-information')
-  findRangeInformation(@Body() informationDto: InformationDto) {
-    return this.sensoresService.findRangeInformation(informationDto);
+  async findRangeInformation(@Body() informationDto: InformationDto) {
+    return await this.sensoresService.findRangeInformation(informationDto);
   }
 
   @Get()
-  findAll() {
-    return this.sensoresService.findAll();
+  async findAll(@Query() paginationDto: any) {
+    return await this.sensoresService.findAll(paginationDto);
   }
 
   @Get(':id')

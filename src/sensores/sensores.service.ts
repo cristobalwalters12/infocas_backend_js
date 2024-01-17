@@ -71,7 +71,7 @@ export class SensoresService {
     const query =
       'SELECT * FROM `sensores` ' +
       'INNER JOIN nombres_sensores ON nombres_sensores.id_sensor = sensores.id_sensor ' +
-      'WHERE nombres_sensores.nombre_sensor = ? ' +
+      'WHERE nombres_sensores.id_sensor = ? ' +
       "AND CONCAT(fecha, ' ', hora) BETWEEN ? AND ? " +
       'ORDER BY fecha, hora ASC';
 
