@@ -10,6 +10,7 @@ export class NombresSensoresService {
     @InjectRepository(NombresSensore)
     private nombresSensoreRepository: Repository<NombresSensore>,
   ) {}
+
   async create(createNombresSensoreDto: CreateNombresSensoreDto) {
     const nombresSensore = this.nombresSensoreRepository.create(
       createNombresSensoreDto,
