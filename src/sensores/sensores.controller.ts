@@ -8,8 +8,11 @@ import {
   Delete,
 } from '@nestjs/common';
 import { SensoresService } from './sensores.service';
-import { CreateSensoreDto } from './dto/create-sensore.dto';
-import { UpdateSensoreDto } from './dto/update-sensore.dto';
+import {
+  CreateSensoreDto,
+  UpdateSensoreDto,
+  InformationDto,
+} from './dto/index';
 
 @Controller('sensores')
 export class SensoresController {
@@ -18,6 +21,11 @@ export class SensoresController {
   @Post()
   create(@Body() createSensoreDto: CreateSensoreDto) {
     return this.sensoresService.create(createSensoreDto);
+  }
+
+  @Post('/range-information')
+  findRangeInformation(@Body() informationDto: InformationDto) {
+    return this.sensoresService.findRangeInformation(informationDto);
   }
 
   @Get()

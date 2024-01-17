@@ -1,19 +1,33 @@
-/* eslint-disable prettier/prettier */
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { NombresSensore } from '../../nombres_sensores/entities/nombres_sensore.entity';
+
 @Entity('sensores')
 export class Sensores {
-    @PrimaryGeneratedColumn()
-    numero_registro: number;
+  @PrimaryGeneratedColumn()
+  numero_registro: number;
 
-    @Column('float')
-    temperatura: number;
+  @ManyToOne(() => NombresSensore)
+  @JoinColumn({ name: 'id_sensor', referencedColumnName: 'id_sensor' })
+  nombresSensore: NombresSensore;
 
-    @Column('float')
-    humedad: number;
+  @Column('float')
+  temperatura: number;
 
-    @Column('date')
-    fecha: Date;
+  @Column('float')
+  humedad: number;
 
-    @Column('time')
-    hora: string;
+  @Column('date')
+  fecha: Date;
+
+  @Column('time')
+  hora: string;
+
+  @Column()
+  id_sensor: number;
 }
