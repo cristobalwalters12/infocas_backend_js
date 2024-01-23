@@ -1,8 +1,8 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class InformationDto {
-  @IsNumber()
-  id_sensor: number;
+  @IsString()
+  nombreSensor: string;
 
   @IsString()
   startDateTime: string;

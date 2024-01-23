@@ -66,17 +66,40 @@ export class SensoresService {
   }
 
   async findRangeInformation(informationDto: InformationDto) {
-    const { id_sensor, startDateTime, endDateTime } = informationDto;
+    const { nombreSensor, startDateTime, endDateTime } = informationDto;
 
     const query =
       'SELECT * FROM `sensores` ' +
       'INNER JOIN nombres_sensores ON nombres_sensores.id_sensor = sensores.id_sensor ' +
-      'WHERE nombres_sensores.id_sensor = ? ' +
+      'WHERE nombres_sensores.nombre_sensor = ? ' +
       "AND CONCAT(fecha, ' ', hora) BETWEEN ? AND ? " +
       'ORDER BY fecha, hora ASC';
 
     const result = await this.sensoresRepository.query(query, [
-      id_sensor,
+      nombreSensor,
+      startDateTime,
+      endDateTime,
+    ]);
+
+    return result;
+  }
+
+  async findTemperatureRange(informationDto: InformationDto) {
+    const { nombreSensor, startDateTime, endDateTime } = informationDto;
+
+    const query = `
+    SELECT ROUND(MIN(temperatura),2) as minima_temperatura,
+           ROUND(MAX(temperatura),2) as maxima_temperatura,
+           ROUND(MIN(humedad),2) as minima_humedad,
+           ROUND(MAX(humedad),2) as maxima_humedad
+    FROM sensores INNER JOIN nombres_sensores ON nombres_sensores.id_sensor = sensores.id_sensor
+    WHERE nombres_sensores.nombre_sensor = ?
+      AND CONCAT(fecha, ' ', hora) BETWEEN ? AND ?
+    ORDER BY fecha, hora ASC
+  `;
+
+    const result = await this.sensoresRepository.query(query, [
+      nombreSensor,
       startDateTime,
       endDateTime,
     ]);

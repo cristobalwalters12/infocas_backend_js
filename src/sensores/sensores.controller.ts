@@ -29,6 +29,11 @@ export class SensoresController {
     return await this.sensoresService.findRangeInformation(informationDto);
   }
 
+  @Post('/temperature-information')
+  async findInformation(@Body() informationDto: InformationDto) {
+    return await this.sensoresService.findTemperatureRange(informationDto);
+  }
+
   @Get()
   async findAll(@Query() paginationDto: any) {
     return await this.sensoresService.findAll(paginationDto);

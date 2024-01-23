@@ -1,28 +1,43 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SensoresModule } from './sensores/sensores.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { NombresSensoresModule } from './nombres_sensores/nombres_sensores.module';
-
+import { PingService } from './common/services/Ping.service';
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DATABASE_HOST,
-      port: parseInt(process.env.DATABASE_PORT),
-      username: process.env.DATABASE_USERNAME,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE,
-      autoLoadEntities: true,
-      synchronize: false,
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'mysql',
+        host: configService.get('DATABASE_HOST'),
+        port: parseInt(configService.get('DATABASE_PORT')),
+        username: configService.get('DATABASE_USERNAME'),
+        password: configService.get('DATABASE_PASSWORD'),
+        database: configService.get('DATABASE'),
+        autoLoadEntities: true,
+        synchronize: false,
+        autoReconnect: true,
+        reconnectTries: Number.MAX_VALUE,
+        reconnectInterval: configService.get('DATABASE_RECONNECT_INTERVAL'),
+        retryAttempts: configService.get('DATABASE_RETRY_ATTEMPTS'),
+        retryDelay: configService.get('DATABASE_RETRY_DELAY'),
+        extra: {
+          connectionLimit: configService.get('DATABASE_CONNECTION_LIMIT'),
+        },
+      }),
     }),
     SensoresModule,
     UsuarioModule,
     NombresSensoresModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [PingService],
 })
 export class AppModule {}
