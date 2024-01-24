@@ -31,7 +31,6 @@ import { PingService } from './common/services/Ping.service';
         extra: {
           connectionLimit: configService.get('DATABASE_CONNECTION_LIMIT'),
           connectTimeout: configService.get('DATABASE_CONNECTION_TIMEOUT'),
-          acquireTimeout: configService.get('DATABASE_ACQUIRE_TIMEOUT'),
         },
       }),
     }),
