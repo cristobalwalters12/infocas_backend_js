@@ -30,6 +30,8 @@ import { PingService } from './common/services/Ping.service';
         retryDelay: configService.get('DATABASE_RETRY_DELAY'),
         extra: {
           connectionLimit: configService.get('DATABASE_CONNECTION_LIMIT'),
+          connectTimeout: configService.get('DATABASE_CONNECTION_TIMEOUT'),
+          acquireTimeout: configService.get('DATABASE_ACQUIRE_TIMEOUT'),
         },
       }),
     }),
