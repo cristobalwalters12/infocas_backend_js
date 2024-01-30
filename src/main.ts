@@ -6,7 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new RetryInterceptor());
   app.enableCors({
-    origin: 'https://infocas-js-production.up.railway.app',
+    origin: 'https://infocas-js.vercel.app',
     credentials: true,
   });
 
