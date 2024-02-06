@@ -8,7 +8,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new RetryInterceptor());
   const configService = app.get(ConfigService);
   app.enableCors({
-    origin: 'https://infocas-js.vercel.app', // this configuration is for develop configService.get('CORS_ORIGIN'),
+    origin: configService.get('CORS_ORIGIN'), // this configuration is for develop configService.get('CORS_ORIGIN'),
     credentials: true,
   });
 
