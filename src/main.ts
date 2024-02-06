@@ -8,7 +8,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new RetryInterceptor());
   const configService = app.get(ConfigService);
   app.enableCors({
-    origin: configService.get('CORS_ORIGIN'), // this configuration is for develop configService.get('CORS_ORIGIN'),
+    origin: configService.get('CORS_ORIGIN').split(','), // this configuration is for develop configService.get('CORS_ORIGIN'),
     credentials: true,
   });
 
