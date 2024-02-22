@@ -53,7 +53,7 @@ export class UsuarioService {
       const { contraseña, correo } = loginUserDto;
       const usuario = await this.usuarioRepository.findOne({
         where: { correo: correo },
-        select: ['correo', 'contraseña'],
+        select: ['correo', 'contraseña', 'nombre'],
       });
 
       if (!usuario) {
