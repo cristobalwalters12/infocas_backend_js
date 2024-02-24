@@ -5,6 +5,7 @@ import { SensoresModule } from './sensores/sensores.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { NombresSensoresModule } from './nombres_sensores/nombres_sensores.module';
 import { PingService } from './common/services/Ping.service';
+import { HistorialModule } from './historial/historial.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -37,6 +38,7 @@ import { PingService } from './common/services/Ping.service';
     SensoresModule,
     UsuarioModule,
     NombresSensoresModule,
+    HistorialModule,
   ],
   controllers: [],
   providers: [PingService],
