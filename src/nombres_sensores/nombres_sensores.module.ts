@@ -26,5 +26,6 @@ import { Usuario } from '../usuario/entities/usuario.entity';
       },
     }),
   ],
+  exports: [NombresSensoresService],
 })
 export class NombresSensoresModule {}

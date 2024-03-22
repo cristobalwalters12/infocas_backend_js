@@ -7,5 +7,6 @@ import { Sensores } from './entities/sensore.entity';
   controllers: [SensoresController],
   providers: [SensoresService],
   imports: [TypeOrmModule.forFeature([Sensores])],
+  exports: [SensoresService],
 })
 export class SensoresModule {}

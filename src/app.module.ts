@@ -6,8 +6,11 @@ import { UsuarioModule } from './usuario/usuario.module';
 import { NombresSensoresModule } from './nombres_sensores/nombres_sensores.module';
 import { PingService } from './common/services/Ping.service';
 import { HistorialModule } from './historial/historial.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskService } from './common/services/Task.service';
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
@@ -41,6 +44,6 @@ import { HistorialModule } from './historial/historial.module';
     HistorialModule,
   ],
   controllers: [],
-  providers: [PingService],
+  providers: [PingService, TaskService],
 })
 export class AppModule {}
