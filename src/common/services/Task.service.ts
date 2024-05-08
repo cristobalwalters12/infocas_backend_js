@@ -12,7 +12,7 @@ export class TaskService {
     private configService: ConfigService,
   ) {}
 
-  @Cron('0 0 1 * *  1-5')
+  @Cron('0 5 1 * *  1-5')
   async MailJob() {
     try {
       const sensores = await this.nombresSensoresService.findAll();
