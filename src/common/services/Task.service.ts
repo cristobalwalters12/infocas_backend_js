@@ -11,18 +11,19 @@ export class TaskService {
     private nombresSensoresService: NombresSensoresService,
     private configService: ConfigService,
   ) {}
-  //@Cron('40 0 * 1-12 *')
-  @Cron('* * * * *')
+
+  @Cron('0 0 1 * *  1-5')
   async MailJob() {
     try {
       const sensores = await this.nombresSensoresService.findAll();
       const yesterday: Date = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       const formattedDate: string = yesterday.toISOString().split('T')[0];
-      const hourStart: string = '23:01:00';
-      const hourEnd: string = '23:30:00';
+      const hourStart: string = '00:01:00';
+      const hourEnd: string = '00:30:00';
       const sensoresSinDatos: string[] = [];
-
+      const sensoressinDatosId: number[] = [];
+      const dataForHTML = [];
       for (const sensor of sensores) {
         const result = await this.sensoresService.findRangeInformation({
           nombreSensor: sensor.nombre_sensor,
@@ -33,9 +34,16 @@ export class TaskService {
           console.log(result);
         } else {
           sensoresSinDatos.push(sensor.nombre_sensor);
+          sensoressinDatosId.push(sensor.id_sensor);
         }
       }
-      if (sensoresSinDatos.length > 0) {
+      for (const id of sensoressinDatosId) {
+        const resultsId =
+          await this.nombresSensoresService.findLastHourRegisters(id);
+        dataForHTML.push(resultsId[0]);
+        console.log(resultsId);
+      }
+      if (sensoresSinDatos.length && sensoressinDatosId.length > 0) {
         const transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
@@ -48,13 +56,24 @@ export class TaskService {
           to: 'cristobalwalters@gmail.com', // destinatario
           subject: 'Sensores sin datos', // Asunto
           html: `
+              <h1>Sensores sin datos</h1>
+              <p>se hizo un analisis de los datos de la fecha ${formattedDate} con horas entre ${hourStart} y ${hourEnd} para ver los ultimos Registros ingresados</p>
+              <p>y se detecto que no se ha encontrado informacion en los siguientes sensores: </p>
               <table>
                 <tr>
                   <th>Nombre del sensor</th>
                 </tr>
                 ${sensoresSinDatos
-                  .map((sensor) => `<tr><td>${sensor}</td></tr>`)
+                  .map(
+                    (sensor, i) =>
+                      `<tr><td>${sensor}</td><td>${
+                        new Date(dataForHTML[i].fecha)
+                          .toISOString()
+                          .split('T')[0]
+                      }</td><td>${dataForHTML[i].hora}</td></tr>`,
+                  )
                   .join('')}
+                
               </table>
             `,
         };
