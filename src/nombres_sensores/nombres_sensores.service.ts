@@ -21,7 +21,6 @@ export class NombresSensoresService {
   async findAll() {
     const query =
       'SELECT id_sensor, nombre_sensor FROM nombres_sensores ORDER BY RIGHT(nombre_sensor ,4) ASC';
-    console.log(query);
     return await this.nombresSensoreRepository.query(query);
   }
   async findLastHourRegisters(id: number) {
