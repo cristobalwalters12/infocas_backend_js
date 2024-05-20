@@ -13,4 +13,7 @@ export class Usuario {
 
   @Column('varchar')
   contraseña: string;
+
+  @Column('varchar')
+  rol: string;
 }

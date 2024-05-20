@@ -53,11 +53,11 @@ export class UsuarioService {
       const { contraseña, correo } = loginUserDto;
       const usuario = await this.usuarioRepository.findOne({
         where: { correo: correo },
-        select: ['correo', 'contraseña', 'nombre'],
+        select: ['correo', 'contraseña', 'nombre', 'rol'],
       });
 
       if (!usuario) {
-        throw new UnauthorizedException('las credenciales no son validad');
+        throw new UnauthorizedException('las credenciales no son validas');
       }
 
       const isMatch = await bcrypt.compare(contraseña, usuario.contraseña);
@@ -65,9 +65,10 @@ export class UsuarioService {
       if (!isMatch && contraseña !== usuario.contraseña) {
         throw new UnauthorizedException('La contraseña es incorrecta');
       }
-
+      delete usuario.contraseña;
       return {
         ...usuario,
+
         token: this.getJwtToken({ correo: usuario.correo }),
       };
     } catch (error) {
