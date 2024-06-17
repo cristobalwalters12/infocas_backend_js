@@ -23,6 +23,7 @@ export class NombresSensoresService {
       'SELECT id_sensor, nombre_sensor FROM nombres_sensores ORDER BY RIGHT(nombre_sensor ,4) ASC';
     return await this.nombresSensoreRepository.query(query);
   }
+
   async findLastHourRegisters(id: number) {
     const query = `SELECT * FROM sensores where id_sensor = ${id} ORDER BY fecha DESC LIMIT 1`;
     console.log(query);
@@ -34,7 +35,6 @@ export class NombresSensoresService {
       where: { id_sensor: id },
     });
   }
-
   async update(id: number, updateNombresSensoreDto: UpdateNombresSensoreDto) {
     await this.nombresSensoreRepository.update(
       { id_sensor: id },

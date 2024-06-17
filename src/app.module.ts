@@ -8,6 +8,7 @@ import { PingService } from './common/services/Ping.service';
 import { HistorialModule } from './historial/historial.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskService } from './common/services/Task.service';
+import { SensoresBackupModule } from './sensores-backup/sensores-backup.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -42,6 +43,7 @@ import { TaskService } from './common/services/Task.service';
     UsuarioModule,
     NombresSensoresModule,
     HistorialModule,
+    SensoresBackupModule,
   ],
   controllers: [],
   providers: [PingService, TaskService],
