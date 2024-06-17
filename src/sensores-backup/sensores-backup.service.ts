@@ -4,12 +4,13 @@ import { NombresSensoresService } from '../nombres_sensores/nombres_sensores.ser
 import { SensoresService } from '../sensores/sensores.service';
 import { writeFile, unlink } from 'fs/promises';
 import * as SftpClient from 'ssh2-sftp-client';
-
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class SensoresBackupService {
   constructor(
     private sensoresService: SensoresService,
     private nombresSensoresService: NombresSensoresService,
+    private configService: ConfigService,
   ) {}
 
   async create(createSensoresBackupDto: CreateSensoresBackupDto) {
@@ -28,10 +29,10 @@ export class SensoresBackupService {
     const sftp = new SftpClient();
     try {
       await sftp.connect({
-        host: '172.105.150.78',
-        port: 22,
-        username: 'root',
-        password: 'controlas1883',
+        host: this.configService.get('FTP_HOST'),
+        port: this.configService.get('FTP_PORT'),
+        username: this.configService.get('FTP_USER'),
+        password: this.configService.get('FTP_PASS'),
       });
       await sftp.put(filename, '/root/respaldo/pruebas/' + filename);
       console.log('Archivo subido exitosamente');
