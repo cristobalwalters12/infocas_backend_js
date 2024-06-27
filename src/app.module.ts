@@ -9,6 +9,7 @@ import { HistorialModule } from './historial/historial.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskService } from './common/services/Task.service';
 import { SensoresBackupModule } from './sensores-backup/sensores-backup.module';
+import { AppController } from './app.controller';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -45,7 +46,7 @@ import { SensoresBackupModule } from './sensores-backup/sensores-backup.module';
     HistorialModule,
     SensoresBackupModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [PingService, TaskService],
 })
 export class AppModule {}
