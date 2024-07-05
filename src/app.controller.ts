@@ -5,6 +5,6 @@ import { Controller, Get } from '@nestjs/common';
 export class AppController {
   @Get()
   getRoot(): string {
-    return 'El servicio está conectado!';
+    return 'El servidor está conectado!';
   }
 }

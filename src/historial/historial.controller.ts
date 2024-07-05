@@ -16,6 +16,8 @@ export class HistorialController {
     return this.historialService.findAll();
   }
 
+  
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.historialService.findOne(+id);
