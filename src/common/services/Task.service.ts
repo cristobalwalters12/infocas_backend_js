@@ -20,7 +20,7 @@ export class TaskService {
       yesterday.setDate(yesterday.getDate() - 1);
       const formattedDate: string = yesterday.toISOString().split('T')[0];
       const hourStart: string = '00:01:00';
-      const hourEnd: string = '00:30:00';
+      const hourEnd: string = '00:33:00';
       const sensoresSinDatos: string[] = [];
       const sensoressinDatosId: number[] = [];
       const dataForHTML = [];
@@ -53,29 +53,76 @@ export class TaskService {
         });
         const mailOptions = {
           from: 'infocasalerta@gmail.com',
-          to: 'cristobalwalters@gmail.com', // destinatario
-          subject: 'Sensores sin datos', // Asunto
+          to: 'cristobalwalters@gmail.com',
+          subject: 'Alertas de sensor sin temperatura',
           html: `
-              <h1>Sensores sin datos</h1>
-              <p>se hizo un analisis de los datos de la fecha ${formattedDate} con horas entre ${hourStart} y ${hourEnd} para ver los ultimos Registros ingresados</p>
-              <p>y se detecto que no se ha encontrado informacion en los siguientes sensores: </p>
-              <table>
-                <tr>
-                  <th>Nombre del sensor</th>
-                </tr>
-                ${sensoresSinDatos
-                  .map(
-                    (sensor, i) =>
-                      `<tr><td>${sensor}</td><td>${
-                        new Date(dataForHTML[i].fecha)
-                          .toISOString()
-                          .split('T')[0]
-                      }</td><td>${dataForHTML[i].hora}</td></tr>`,
-                  )
-                  .join('')}
-                
-              </table>
-            `,
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Correo Electrónico</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                }
+                .container {
+                    padding: 20px;
+                    background-color: #f9f9f9;
+                    border: 1px solid #ddd;
+                }
+                .header {
+                    background-color: #4CAF50;
+                    color: white;
+                    padding: 10px;
+                    text-align: center;
+                }
+                .content {
+                    margin-top: 20px;
+                }
+                .footer {
+                    margin-top: 20px;
+                    font-size: 12px;
+                    color: #777;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Sensores sin datos</h1>
+                    <div>
+                        <img src="https://infocas-js.vercel.app/unnamed1.png" alt="Logo" width="150">   
+                    </div>
+                </div>
+                <div class="content">
+                    <p>Se hizo un análisis de los datos de la fecha ${formattedDate} con horas entre ${hourStart} y ${hourEnd} para ver los últimos registros ingresados</p>
+                    <p>Y se detectó que no se ha encontrado información en los siguientes sensores: </p>
+                    <table>
+                        <tr>
+                            <th>Nombre del sensor</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                        </tr>
+                        ${sensoresSinDatos
+                          .map(
+                            (sensor, i) =>
+                              `<tr><td>${sensor}</td><td>${
+                                new Date(dataForHTML[i].fecha)
+                                  .toISOString()
+                                  .split('T')[0]
+                              }</td><td>${dataForHTML[i].hora}</td></tr>`,
+                          )
+                          .join('')}
+                    </table>
+                </div>
+                <div class="footer">
+                    <p>&copy; 2024 Infocas. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+          `,
         };
         transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
