@@ -20,7 +20,7 @@ export class TaskService {
       yesterday.setDate(yesterday.getDate() - 1);
       const formattedDate: string = yesterday.toISOString().split('T')[0];
       const hourStart: string = '00:01:00';
-      const hourEnd: string = '00:33:00';
+      const hourEnd: string = '00:34:00';
       const sensoresSinDatos: string[] = [];
       const sensoressinDatosId: number[] = [];
       const dataForHTML = [];
@@ -72,13 +72,17 @@ export class TaskService {
                     border: 1px solid #ddd;
                 }
                 .header {
-                    background-color: #4CAF50;
-                    color: white;
+                    background-color: #f2f2f2;
+                    color: black;
                     padding: 10px;
                     text-align: center;
                 }
                 .content {
                     margin-top: 20px;
+                }
+                .table {
+                    display: flex;
+                    justify-content: center;
                 }
                 .footer {
                     margin-top: 20px;
@@ -98,7 +102,8 @@ export class TaskService {
                 <div class="content">
                     <p>Se hizo un análisis de los datos de la fecha ${formattedDate} con horas entre ${hourStart} y ${hourEnd} para ver los últimos registros ingresados</p>
                     <p>Y se detectó que no se ha encontrado información en los siguientes sensores: </p>
-                    <table>
+                    <div class="table">
+                      <table>
                         <tr>
                             <th>Nombre del sensor</th>
                             <th>Fecha</th>
@@ -115,6 +120,8 @@ export class TaskService {
                           )
                           .join('')}
                     </table>
+                    </div>
+
                 </div>
                 <div class="footer">
                     <p>&copy; 2024 Infocas. Todos los derechos reservados.</p>
