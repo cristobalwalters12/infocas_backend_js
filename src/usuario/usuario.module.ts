@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { UsuarioController } from './usuario.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,6 +7,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { DecodeBase64Middleware } from 'src/common/middlewares/decode-base64.middleware';
 
 @Module({
   controllers: [UsuarioController],
@@ -29,4 +30,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   ],
   exports: [TypeOrmModule, UsuarioService, JwtStrategy, PassportModule],
 })
-export class UsuarioModule {}
+export class UsuarioModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(DecodeBase64Middleware)
+      .forRoutes({ path: 'usuario/login', method: RequestMethod.POST });
+  }
+}

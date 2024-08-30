@@ -15,7 +15,17 @@ export class HistorialService {
   }
 
   async findAll() {
-    return await this.historialRepository.find();
+    const query = 'SELECT * FROM historial ORDER BY fecha DESC';
+    const result = await this.historialRepository.query(query);
+
+    const formattedResult = result.map((item: any) => {
+      if (item.fecha) {
+        item.fecha = new Date(item.fecha).toISOString().split('T')[0];
+      }
+      return item;
+    });
+
+    return formattedResult;
   }
 
   findOne(id: number) {
