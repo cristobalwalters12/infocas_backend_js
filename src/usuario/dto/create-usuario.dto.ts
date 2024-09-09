@@ -12,4 +12,7 @@ export class CreateUsuarioDto {
   @IsNotEmpty()
   @IsString()
   contraseña: string;
+  @IsString()
+  @IsNotEmpty()
+  rol: string;
 }
