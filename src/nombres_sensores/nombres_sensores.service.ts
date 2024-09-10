@@ -47,6 +47,6 @@ export class NombresSensoresService {
 
   async remove(id: number) {
     await this.nombresSensoreRepository.delete({ id_sensor: id });
-    return { deleted: true };
+    return { deleted: true, message: `Sensor with id ${id} has been deleted` };
   }
 }
