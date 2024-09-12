@@ -12,7 +12,15 @@ export class RestTrackingMiddleware implements NestMiddleware {
     const uuid = uuidv4();
     res.on('finish', () => {
       const elapsed = Date.now() - start;
-      this.logger.log(`${req.method} ${req.url} ${res.statusCode} ${elapsed}ms ${uuid}`);
+      if(res.statusCode >= 400) {
+        this.logger.error(`[${uuid}] ${req.method} ${req.url} ${res.statusCode} ${elapsed}ms`);
+      }else{
+        this.logger.log(`[${uuid}] ${req.method} ${req.url} ${res.statusCode} ${elapsed}ms`);
+      }
+    });
+    res.on('error', (err) => {
+      const elapsed = Date.now() - start;
+      this.logger.error(`${req.method} ${req.url} ${res.statusCode} ${elapsed}ms ${uuid} - Error: ${err.message}`);
     });
     next();
   }
