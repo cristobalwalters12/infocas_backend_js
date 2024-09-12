@@ -5,9 +5,8 @@ import { SensoresService } from '../sensores/sensores.service';
 import { writeFile, unlink } from 'fs/promises';
 import * as SftpClient from 'ssh2-sftp-client';
 import { ConfigService } from '@nestjs/config';
-
 @Injectable()
-export class SensoresBackupService {
+export class SensoresBackupControllerService {
   constructor(
     private sensoresService: SensoresService,
     private nombresSensoresService: NombresSensoresService,
