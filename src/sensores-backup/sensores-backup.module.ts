@@ -6,7 +6,7 @@ import { NombresSensoresModule } from '../nombres_sensores/nombres_sensores.modu
 
 @Module({
   controllers: [SensoresBackupController],
-  providers: [SensoresBackupService,SensoresBackupController],
+  providers: [SensoresBackupService, SensoresBackupController],
   imports: [SensoresModule, NombresSensoresModule],
 })
 export class SensoresBackupModule {}

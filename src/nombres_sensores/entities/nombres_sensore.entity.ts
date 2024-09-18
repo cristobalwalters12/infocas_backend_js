@@ -1,5 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Sensores } from '../../sensores/entities/sensore.entity';
+import { Controlador } from '../../controladores/entities/controladore.entity';
 
 @Entity('nombres_sensores')
 export class NombresSensore {
@@ -11,4 +19,8 @@ export class NombresSensore {
 
   @OneToMany(() => Sensores, (sensores) => sensores.nombresSensore)
   sensores: Sensores[];
+
+  @ManyToOne(() => Controlador, (controlador) => controlador.nombresSensores)
+  @JoinColumn({ name: 'controlador_id' })
+  controlador: Controlador;
 }
