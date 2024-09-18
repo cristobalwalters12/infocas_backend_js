@@ -1,4 +1,9 @@
-import { Module, NestModule,MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import {
+  Module,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SensoresModule } from './sensores/sensores.module';
@@ -11,6 +16,7 @@ import { TaskService } from './common/services/Task.service';
 import { SensoresBackupModule } from './sensores-backup/sensores-backup.module';
 import { AppController } from './app.controller';
 import { RestTrackingMiddleware } from './common/middlewares/rest-Tracking.middleware';
+import { ControladoresModule } from './controladores/controladores.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -46,11 +52,12 @@ import { RestTrackingMiddleware } from './common/middlewares/rest-Tracking.middl
     NombresSensoresModule,
     HistorialModule,
     SensoresBackupModule,
+    ControladoresModule,
   ],
   controllers: [AppController],
   providers: [PingService, TaskService],
 })
-export class AppModule implements NestModule{
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(RestTrackingMiddleware)
