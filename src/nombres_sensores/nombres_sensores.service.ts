@@ -29,7 +29,6 @@ export class NombresSensoresService {
     console.log(query);
     return await this.nombresSensoreRepository.query(query);
   }
-
   async findOne(id: number) {
     return await this.nombresSensoreRepository.findOne({
       where: { id_sensor: id },
@@ -48,5 +47,9 @@ export class NombresSensoresService {
   async remove(id: number) {
     await this.nombresSensoreRepository.delete({ id_sensor: id });
     return { deleted: true, message: `Sensor with id ${id} has been deleted` };
+  }
+  async findsensoresBycontrolador(id: number) {
+    const query = `SELECT * FROM nombres_sensores where controlador_id = ${id}`;
+    return await this.nombresSensoreRepository.query(query);
   }
 }
