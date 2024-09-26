@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body,Res } from '@nestjs/common';
 import { ControladoresService } from './controladores.service';
 import { CreateControladoreDto } from './dto/create-controladore.dto';
 import { FindControladoreDto } from './dto/find-controladore.dto';
 import { FindRespaldoControladoresDto } from './dto/find-respaldo-Controladores.dto';
-
+import { DownloadControladorDto } from './dto/download-controlador.dto';
+import { Response } from 'express';
 @Controller('controladores')
 export class ControladoresController {
   constructor(private readonly controladoresService: ControladoresService) {}
@@ -25,8 +26,15 @@ export class ControladoresController {
       findRespaldoControladoresDto,
     );
   }
-  @Post('/findControladorAndRespaldar')
+   @Post('/findControladorAndRespaldar')
   findOne(@Body() findControladoreDto: FindControladoreDto) {
     return this.controladoresService.respaldarTxt(findControladoreDto);
+  }
+  @Post('/descargarRespaldo')
+  async descargarRespaldo(
+    @Body() downloadControladorDto: DownloadControladorDto,
+    @Res() res: Response
+  ) {
+    return this.controladoresService.descargarRespaldo(downloadControladorDto, res);
   }
 }

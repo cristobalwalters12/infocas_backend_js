@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateControladoreDto } from './dto/create-controladore.dto';
 import { FindControladoreDto } from './dto/find-controladore.dto';
 import { FindRespaldoControladoresDto } from './dto/find-respaldo-Controladores.dto';
-
+import { DownloadControladorDto } from './dto/download-controlador.dto';
 import { Controlador } from './entities/controladore.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -10,6 +10,7 @@ import { NombresSensoresService } from 'src/nombres_sensores/nombres_sensores.se
 import { SensoresService } from 'src/sensores/sensores.service';
 import * as SftpClient from 'ssh2-sftp-client';
 import { ConfigService } from '@nestjs/config';
+import { Response } from 'express';
 @Injectable()
 export class ControladoresService {
   constructor(
@@ -135,4 +136,38 @@ export class ControladoresService {
       throw new Error('Error al obtener datos del controlador');
     }
   }
+  async descargarRespaldo(downloadControladorDto: DownloadControladorDto, res: Response) {
+    const { controlador, archivo } = downloadControladorDto;
+    const sftp = new SftpClient();
+
+    try {
+      await sftp.connect({
+        host: this.configService.get('FTP_HOST'),
+        port: this.configService.get('FTP_PORT'),
+        username: this.configService.get('FTP_USER'),
+        password: this.configService.get('FTP_PASS'),
+      });
+      
+      const remoteFilePath = `/root/respaldo/${controlador}/${archivo}`;
+      
+      const fileContent = await sftp.get(remoteFilePath);
+      res.setHeader('Content-Type', 'application/octet-stream');
+      res.setHeader('Content-Disposition', `attachment; filename="${archivo}"`);
+      if (Buffer.isBuffer(fileContent) || typeof fileContent === 'string') {
+        res.send(fileContent);
+      } else {
+        throw new Error('Formato de archivo no soportado');
+      }
+
+    } catch (err) {
+      console.error('Error al descargar el archivo:', err);
+      res.status(500).json({ message: 'Error al descargar el archivo' });
+    } finally {
+      await sftp.end();
+    }
+  }
 }
+
+ 
+  
+
