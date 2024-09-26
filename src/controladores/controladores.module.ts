@@ -6,11 +6,13 @@ import { Controlador } from './entities/controladore.entity';
 import { SensoresModule } from 'src/sensores/sensores.module';
 import { NombresSensoresModule } from 'src/nombres_sensores/nombres_sensores.module';
 
-
 @Module({
   controllers: [ControladoresController],
   providers: [ControladoresService],
-  imports: [TypeOrmModule.forFeature([Controlador]),
-  SensoresModule, NombresSensoresModule],
+  imports: [
+    TypeOrmModule.forFeature([Controlador]),
+    SensoresModule,
+    NombresSensoresModule,
+  ],
 })
 export class ControladoresModule {}
