@@ -25,7 +25,7 @@ export class ControladoresController {
       findRespaldoControladoresDto,
     );
   }
-  @Post('/findControlador')
+  @Post('/findControladorAndRespaldar')
   findOne(@Body() findControladoreDto: FindControladoreDto) {
     return this.controladoresService.respaldarTxt(findControladoreDto);
   }
