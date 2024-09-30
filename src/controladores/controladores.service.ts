@@ -106,16 +106,17 @@ export class ControladoresService {
           username: this.configService.get('FTP_USER'),
           password: this.configService.get('FTP_PASS'),
         });
+        const fecha = new Date().toISOString().split('T')[0];
         await sftp.put(
           Buffer.from(data),
-          `/root/respaldo/pruebas/${controlador}.txt`,
+          `/root/respaldo/${controlador}/${controlador}-${fecha}-Webs.txt`,
         );
 
         console.log(
           await sftp.put(
             Buffer.from(data),
-            `/root/respaldo/pruebas/${controlador}.txt`,
-          ),
+            `/root/respaldo/${controlador}/${controlador}-${fecha}-Web.txt`,
+          )
         );
         console.log('Archivo subido exitosamente');
 
