@@ -116,7 +116,7 @@ export class ControladoresService {
           await sftp.put(
             Buffer.from(data),
             `/root/respaldo/${controlador}/${controlador}-${fecha}-Web.txt`,
-          )
+          ),
         );
         console.log('Archivo subido exitosamente');
 
@@ -137,7 +137,10 @@ export class ControladoresService {
       throw new Error('Error al obtener datos del controlador');
     }
   }
-  async descargarRespaldo(downloadControladorDto: DownloadControladorDto, res: Response) {
+  async descargarRespaldo(
+    downloadControladorDto: DownloadControladorDto,
+    res: Response,
+  ) {
     const { controlador, archivo } = downloadControladorDto;
     const sftp = new SftpClient();
 
@@ -148,9 +151,9 @@ export class ControladoresService {
         username: this.configService.get('FTP_USER'),
         password: this.configService.get('FTP_PASS'),
       });
-      
+
       const remoteFilePath = `/root/respaldo/${controlador}/${archivo}`;
-      
+
       const fileContent = await sftp.get(remoteFilePath);
       res.setHeader('Content-Type', 'application/octet-stream');
       res.setHeader('Content-Disposition', `attachment; filename="${archivo}"`);
@@ -159,7 +162,6 @@ export class ControladoresService {
       } else {
         throw new Error('Formato de archivo no soportado');
       }
-
     } catch (err) {
       console.error('Error al descargar el archivo:', err);
       res.status(500).json({ message: 'Error al descargar el archivo' });
@@ -168,7 +170,3 @@ export class ControladoresService {
     }
   }
 }
-
- 
-  
-

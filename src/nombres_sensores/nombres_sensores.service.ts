@@ -25,9 +25,16 @@ export class NombresSensoresService {
   }
 
   async findLastHourRegisters(id: number) {
-    const query = `SELECT * FROM sensores where id_sensor = ${id} ORDER BY fecha DESC LIMIT 1`;
-    console.log(query);
-    return await this.nombresSensoreRepository.query(query);
+    const query = `
+      SELECT s.*, ns.nombre_sensor
+      FROM sensores s
+      INNER JOIN nombres_sensores ns ON s.id_sensor = ns.id_sensor
+      WHERE s.id_sensor = ?
+      ORDER BY s.fecha DESC, s.hora DESC
+      LIMIT 1
+    `;
+
+    return await this.nombresSensoreRepository.query(query, [id]);
   }
 
   async findIds() {
@@ -41,7 +48,6 @@ export class NombresSensoresService {
     }
     return array.flatMap((x) => x);
   }
-
 
   async findOne(id: number) {
     return await this.nombresSensoreRepository.findOne({

@@ -19,7 +19,10 @@ export class NombresSensoresController {
     private readonly nombresSensoresService: NombresSensoresService,
   ) {}
 
-  
+  @Get('/IdsPosibles')
+  findIds() {
+    return this.nombresSensoresService.findIds();
+  }
 
   @Post()
   create(@Body() createNombresSensoreDto: CreateNombresSensoreDto) {
@@ -31,17 +34,12 @@ export class NombresSensoresController {
   findAll() {
     return this.nombresSensoresService.findAll();
   }
-  @Get('/IdsPosibles')
-  findIds() {
-    return this.nombresSensoresService.findIds();
-  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.nombresSensoresService.findOne(+id);
   }
 
-  
   @Patch(':id')
   update(
     @Param('id') id: string,
