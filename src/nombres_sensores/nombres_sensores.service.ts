@@ -29,11 +29,26 @@ export class NombresSensoresService {
     console.log(query);
     return await this.nombresSensoreRepository.query(query);
   }
+
+  async findIds() {
+    const array: any[] = [];
+    const query =
+      'SELECT id_sensor FROM nombres_sensores ORDER BY id_sensor ASC';
+    const result = await this.nombresSensoreRepository.query(query);
+    for (const id of result) {
+      const lastHourRegister = await this.findLastHourRegisters(id.id_sensor);
+      array.push(lastHourRegister);
+    }
+    return array.flatMap((x) => x);
+  }
+
+
   async findOne(id: number) {
     return await this.nombresSensoreRepository.findOne({
       where: { id_sensor: id },
     });
   }
+
   async update(id: number, updateNombresSensoreDto: UpdateNombresSensoreDto) {
     await this.nombresSensoreRepository.update(
       { id_sensor: id },

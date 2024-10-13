@@ -19,6 +19,8 @@ export class NombresSensoresController {
     private readonly nombresSensoresService: NombresSensoresService,
   ) {}
 
+  
+
   @Post()
   create(@Body() createNombresSensoreDto: CreateNombresSensoreDto) {
     return this.nombresSensoresService.create(createNombresSensoreDto);
@@ -29,12 +31,17 @@ export class NombresSensoresController {
   findAll() {
     return this.nombresSensoresService.findAll();
   }
+  @Get('/IdsPosibles')
+  findIds() {
+    return this.nombresSensoresService.findIds();
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.nombresSensoresService.findOne(+id);
   }
 
+  
   @Patch(':id')
   update(
     @Param('id') id: string,
