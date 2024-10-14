@@ -43,12 +43,12 @@ export class SensoresGateway
 
   // Cuando un cliente se conecta, enviamos los datos automáticamente
   handleConnection(client: Socket, ...args: any[]) {
-    console.log(`Client connected: ${client.id}`);
+    this.logger.log(`Client connected: ${client.id}`);
     this.sendSensorDataToClient(client);
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
+    this.logger.log(`Client disconnected: ${client.id}`);
   }
 
   async sendSensorDataToClient(client: Socket) {
