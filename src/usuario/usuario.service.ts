@@ -26,7 +26,7 @@ export class UsuarioService {
       const { contraseña, ...userData } = createUsuarioDto;
       const usuario = this.usuarioRepository.create({
         ...userData,
-        contraseña: await bcrypt.hash(contraseña, 10),
+        contraseña: contraseña,
       });
       const existingUser = await this.usuarioRepository.findOne({
         where: { correo: usuario.correo },
@@ -53,7 +53,14 @@ export class UsuarioService {
       const { contraseña, correo } = loginUserDto;
       const usuario = await this.usuarioRepository.findOne({
         where: { correo: correo },
-        select: ['correo', 'contraseña', 'nombre', 'rol'],
+        select: [
+          'correo',
+          'contraseña',
+          'nombre',
+          'rol',
+          'vista_dashboard',
+          'vista_sensores',
+        ],
       });
 
       if (!usuario) {

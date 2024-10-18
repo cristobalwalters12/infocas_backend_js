@@ -16,4 +16,10 @@ export class Usuario {
 
   @Column('varchar')
   rol: string;
+
+  @Column('boolean')
+  vista_sensores: boolean;
+
+  @Column('boolean')
+  vista_dashboard: boolean;
 }

@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 export class CreateUsuarioDto {
   @IsNotEmpty()
   @IsNumber()
@@ -15,4 +21,10 @@ export class CreateUsuarioDto {
   @IsString()
   @IsNotEmpty()
   rol: string;
+  @IsNotEmpty()
+  @IsBoolean()
+  vista_sensores: boolean;
+  @IsNotEmpty()
+  @IsBoolean()
+  vista_dashboard: boolean;
 }
