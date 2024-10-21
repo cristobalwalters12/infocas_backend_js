@@ -25,11 +25,13 @@ export class TaskService {
       const sensoressinDatosId: number[] = [];
       const dataForHTML = [];
       for (const sensor of sensores) {
+        // se hace la busqueda de datos de los sensores en un rango de horas
         const result = await this.sensoresService.findRangeInformation({
           nombreSensor: sensor.nombre_sensor,
           startDateTime: formattedDate + ' ' + hourStart,
           endDateTime: formattedDate + ' ' + hourEnd,
         });
+        // si se encuentra datos en el rango de horas se imprime en consola
         if (result.length > 0) {
           console.log(result);
         } else {
@@ -41,7 +43,10 @@ export class TaskService {
         const resultsId =
           await this.nombresSensoresService.findLastHourRegisters(id);
         dataForHTML.push(resultsId[0]);
+        console.log('-------------------');
+        console.log('sensores sin info actualizada a la fecha ');
         console.log(resultsId);
+        console.log('-------------------');
       }
       if (sensoresSinDatos.length && sensoressinDatosId.length > 0) {
         const transporter = nodemailer.createTransport({
