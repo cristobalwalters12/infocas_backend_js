@@ -11,6 +11,7 @@ import { SensoresService } from 'src/sensores/sensores.service';
 import * as SftpClient from 'ssh2-sftp-client';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
+
 @Injectable()
 export class ControladoresService {
   constructor(
@@ -72,10 +73,13 @@ export class ControladoresService {
 
   async respaldarTxt(findControladoreDto: FindControladoreDto) {
     const { controlador, startDateTime, endDateTime } = findControladoreDto;
+
     try {
       const controladorEncontrado = await this.controladorRepository.findOne({
         where: { controlador },
       });
+
+      console.log('Controlador encontrado:', controladorEncontrado);
 
       if (!controladorEncontrado) {
         throw new Error('Controlador no encontrado');
@@ -85,6 +89,8 @@ export class ControladoresService {
         await this.nombresSensoresService.findsensoresBycontrolador(
           controladorEncontrado.id,
         );
+
+      console.log('Sensores encontrados:', sensores);
 
       const resultados = await Promise.all(
         sensores.map(async (sensor: any) => {
@@ -96,9 +102,12 @@ export class ControladoresService {
           });
         }),
       );
-      const data = JSON.stringify(resultados.flat(), null, 2);
-      const sftp = new SftpClient();
 
+      const datos = resultados.flat(); // Aplanar los resultados
+      console.log('Datos obtenidos:', datos);
+      const contenidoTXT = this.generarContenidoTXT(sensores, datos); // Generar el contenido del archivo
+
+      const sftp = new SftpClient();
       try {
         await sftp.connect({
           host: this.configService.get('FTP_HOST'),
@@ -106,22 +115,21 @@ export class ControladoresService {
           username: this.configService.get('FTP_USER'),
           password: this.configService.get('FTP_PASS'),
         });
-        const fecha = new Date().toISOString().split('T')[0];
-        await sftp.put(
-          Buffer.from(data),
-          `/root/respaldo/${controlador}/${controlador}-${fecha}-Web.txt`,
-        );
+
+        const fecha = new Date(Date.now() - 3 * 60 * 60 * 1000)
+          .toISOString()
+          .split('T')[0];
+
+        const rutaArchivo = `/root/respaldo/${controlador}/${controlador}-${fecha}-Web.txt`;
+
+        // Subir el archivo al servidor SFTP
+        await sftp.put(Buffer.from(contenidoTXT), rutaArchivo);
         console.log('Archivo subido exitosamente');
 
-        return {
-          message: 'Archivo subido exitosamente',
-        };
+        return { message: 'Archivo subido exitosamente' };
       } catch (err) {
-        console.error(err);
-        return {
-          message: 'Error al subir el archivo',
-          error: err,
-        };
+        console.error('Error al subir el archivo:', err);
+        return { message: 'Error al subir el archivo', error: err };
       } finally {
         await sftp.end();
       }
@@ -130,6 +138,82 @@ export class ControladoresService {
       throw new Error('Error al obtener datos del controlador');
     }
   }
+  // Formatear la fecha y hora desde una fecha ISO
+  private formatearFechaHora(fechaISO: string, hora: string): string {
+    const fecha = new Date(fechaISO); // Convertir a objeto Date
+
+    // Extraer día, mes y año con dos dígitos
+    const day = fecha.getUTCDate().toString().padStart(2, '0');
+    const month = (fecha.getUTCMonth() + 1).toString().padStart(2, '0'); // Enero es 0
+    const year = fecha.getUTCFullYear();
+
+    // Combinar en formato DD/MM/YYYY HH:mm:ss
+    return `${day}/${month}/${year} ${hora}`;
+  }
+
+  // Agrupar los datos por fecha y hora
+  private agruparDatosPorFechaHora(datos: any[]): Record<string, any> {
+    const datosAgrupados: Record<string, any> = {};
+
+    datos.forEach((dato) => {
+      try {
+        const fechaHora = this.formatearFechaHora(dato.fecha, dato.hora);
+
+        if (!datosAgrupados[fechaHora]) {
+          datosAgrupados[fechaHora] = {};
+        }
+        datosAgrupados[fechaHora][dato.nombre_sensor] = dato;
+      } catch (error) {
+        console.error(
+          `Error al procesar el dato: ${JSON.stringify(dato)}`,
+          error,
+        );
+      }
+    });
+
+    return datosAgrupados;
+  }
+
+  // Generar el contenido del archivo TXT
+  private generarContenidoTXT(sensores: any[], datos: any[]): string {
+    const cabecera = this.generarCabecera(sensores);
+    const datosAgrupados = this.agruparDatosPorFechaHora(datos);
+
+    const nombresUnicos = Array.from(
+      new Set(sensores.map((sensor) => sensor.nombre_sensor)),
+    );
+
+    const cuerpo = Object.entries(datosAgrupados)
+      .map(([fechaHora, registros]) => {
+        const voltaje = '12.0'; // Valor fijo
+        const trigger = 'Time:()'; // Trigger fijo
+
+        const columnasSensores = nombresUnicos.map((nombre) => {
+          const registro = registros[nombre];
+          return registro ? `${registro.temperatura},${registro.humedad}` : ',';
+        });
+
+        return `${fechaHora} DST,${voltaje},${columnasSensores.join(',')},${trigger}`;
+      })
+      .join('\n');
+
+    return cabecera + cuerpo;
+  }
+
+  // Generar la cabecera dinámica
+  private generarCabecera(sensores: any[]): string {
+    const nombresUnicos = Array.from(
+      new Set(sensores.map((sensor) => sensor.nombre_sensor)),
+    );
+
+    const columnas = nombresUnicos
+      .map((nombre) => `${nombre} T°(C),${nombre} H%(%RH)`)
+      .join(',');
+
+    const cabeceraBase = 'Date Time,Vin(V)';
+    return `${cabeceraBase},${columnas},Trigger\n`;
+  }
+
   async descargarRespaldo(
     downloadControladorDto: DownloadControladorDto,
     res: Response,
