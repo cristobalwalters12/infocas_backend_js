@@ -79,8 +79,6 @@ export class ControladoresService {
         where: { controlador },
       });
 
-      console.log('Controlador encontrado:', controladorEncontrado);
-
       if (!controladorEncontrado) {
         throw new Error('Controlador no encontrado');
       }
@@ -89,8 +87,6 @@ export class ControladoresService {
         await this.nombresSensoresService.findsensoresBycontrolador(
           controladorEncontrado.id,
         );
-
-      console.log('Sensores encontrados:', sensores);
 
       const resultados = await Promise.all(
         sensores.map(async (sensor: any) => {
@@ -104,7 +100,6 @@ export class ControladoresService {
       );
 
       const datos = resultados.flat(); // Aplanar los resultados
-      console.log('Datos obtenidos:', datos);
       const contenidoTXT = this.generarContenidoTXT(sensores, datos); // Generar el contenido del archivo
 
       const sftp = new SftpClient();
