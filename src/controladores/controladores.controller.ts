@@ -40,4 +40,10 @@ export class ControladoresController {
       res,
     );
   }
+  @Post('/respaldarSensores2024')
+  async respaldarSensores2024(
+    @Body() findControladoreDto: FindControladoreDto,
+  ) {
+    return this.controladoresService.respaldo_Sensores2024(findControladoreDto);
+  }
 }
