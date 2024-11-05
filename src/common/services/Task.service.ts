@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { SensoresService } from '../../sensores/sensores.service';
 import { NombresSensoresService } from '../../nombres_sensores/nombres_sensores.service';
+import { ControladoresService } from '../../controladores/controladores.service';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
 @Injectable()
@@ -10,6 +11,7 @@ export class TaskService {
     private sensoresService: SensoresService,
     private nombresSensoresService: NombresSensoresService,
     private configService: ConfigService,
+    private controladoresService: ControladoresService,
   ) {}
 
   @Cron('0 20 5 * *  1-5')
@@ -146,6 +148,36 @@ export class TaskService {
       }
     } catch (error) {
       console.error(error);
+    }
+  }
+  @Cron('0 0 * * *')
+  async dataRespaldos() {
+    const fecha_fin: Date = new Date();
+    const fecha_inicio: Date = new Date();
+    fecha_inicio.setDate(fecha_inicio.getDate() - 14);
+    const fecha_inicio_str: string = fecha_inicio.toISOString().split('T')[0];
+    const fecha_fin_str: string = fecha_fin.toISOString().split('T')[0];
+
+    try {
+      const nombres_controladores = await this.controladoresService.findAll();
+      const controladores = nombres_controladores.map(
+        (controlador) => controlador.controlador,
+      );
+
+      for (const controlador of controladores) {
+        try {
+          await this.controladoresService.respaldarTxt({
+            controlador,
+            startDateTime: fecha_inicio_str,
+            endDateTime: fecha_fin_str,
+          });
+          console.log(`Respaldo para controlador ${controlador}:`);
+        } catch (error) {
+          console.error(`Error al procesar controlador ${controlador}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Error al obtener nombres de controladores:', error);
     }
   }
 }
