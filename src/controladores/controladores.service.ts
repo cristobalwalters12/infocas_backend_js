@@ -238,7 +238,6 @@ export class ControladoresService {
       );
 
       const datos = resultados.flat();
-      console.log(datos);
       return datos;
     } catch (error) {
       console.error('Error en findOne:', error);
