@@ -208,6 +208,43 @@ export class ControladoresService {
     const cabeceraBase = 'Date Time,Vin(V)';
     return `${cabeceraBase},${columnas},Trigger\n`;
   }
+  ////////////////////////////////////////////////////////////////
+
+  async respaldo_Sensores2024(findControladoreDto: FindControladoreDto) {
+    const { controlador, startDateTime, endDateTime } = findControladoreDto;
+    try {
+      const controladorEncontrado = await this.controladorRepository.findOne({
+        where: { controlador },
+      });
+
+      if (!controladorEncontrado) {
+        throw new Error('Controlador no encontrado');
+      }
+
+      const sensores =
+        await this.nombresSensoresService.findsensoresBycontrolador(
+          controladorEncontrado.id,
+        );
+
+      const resultados = await Promise.all(
+        sensores.map(async (sensor: any) => {
+          const nombreSensor = sensor.nombre_sensor;
+          return await this.sensoresService.findRangeInformation({
+            nombreSensor,
+            startDateTime,
+            endDateTime,
+          });
+        }),
+      );
+
+      const datos = resultados.flat();
+      console.log(datos);
+      return datos;
+    } catch (error) {
+      console.error('Error en findOne:', error);
+      throw new Error('Error al obtener datos del controlador');
+    }
+  }
 
   async descargarRespaldo(
     downloadControladorDto: DownloadControladorDto,
