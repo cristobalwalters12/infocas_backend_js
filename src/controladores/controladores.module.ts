@@ -14,5 +14,6 @@ import { NombresSensoresModule } from 'src/nombres_sensores/nombres_sensores.mod
     SensoresModule,
     NombresSensoresModule,
   ],
+  exports: [ControladoresService],
 })
 export class ControladoresModule {}
