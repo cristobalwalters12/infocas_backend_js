@@ -6,5 +6,4 @@ export class DownloadControladorDto {
   @IsNotEmpty()
   @IsString()
   archivo: string;
-  
 }
