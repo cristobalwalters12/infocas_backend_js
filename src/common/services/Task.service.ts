@@ -160,10 +160,12 @@ export class TaskService {
 
     try {
       const nombres_controladores = await this.controladoresService.findAll();
-      const controladores = nombres_controladores.map(
-        (controlador) => controlador.controlador,
-      );
-
+      const controladores = nombres_controladores
+        .filter(
+          (controlador) =>
+            controlador.id !== 9 && controlador.controlador !== 'UG65',
+        )
+        .map((controlador) => controlador.controlador);
       for (const controlador of controladores) {
         try {
           await this.controladoresService.respaldarTxt({
@@ -171,13 +173,32 @@ export class TaskService {
             startDateTime: fecha_inicio_str,
             endDateTime: fecha_fin_str,
           });
-          console.log(`Respaldo para controlador ${controlador}:`);
+          console.log(`Respaldo para controlador ${controlador}`);
         } catch (error) {
           console.error(`Error al procesar controlador ${controlador}:`, error);
         }
       }
     } catch (error) {
       console.error('Error al obtener nombres de controladores:', error);
+    }
+  }
+
+  @Cron('* * * * *')
+  async respaldoSensores2024() {
+    const fecha_fin: Date = new Date();
+    const fecha_inicio: Date = new Date();
+    fecha_inicio.setDate(fecha_inicio.getDate() - 1);
+    const fecha_inicio_str: string = fecha_inicio.toISOString().split('T')[0];
+    const fecha_fin_str: string = fecha_fin.toISOString().split('T')[0];
+    const controlador: string = 'UG65';
+    try {
+      await this.controladoresService.respaldo_Sensores2024({
+        controlador,
+        startDateTime: fecha_inicio_str,
+        endDateTime: fecha_fin_str,
+      });
+    } catch (error) {
+      console.error('Error al obtener nombres de sensores:', error);
     }
   }
 }
