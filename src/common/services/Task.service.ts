@@ -150,7 +150,7 @@ export class TaskService {
       console.error(error);
     }
   }
-  @Cron('0 0 * * *')
+  @Cron('* * * * *')
   async dataRespaldos() {
     const fecha_fin: Date = new Date();
     const fecha_inicio: Date = new Date();
