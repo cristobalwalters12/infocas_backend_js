@@ -11,6 +11,8 @@ import { SensoresService } from 'src/sensores/sensores.service';
 import * as SftpClient from 'ssh2-sftp-client';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class ControladoresService {
@@ -209,23 +211,22 @@ export class ControladoresService {
     return `${cabeceraBase},${columnas},Trigger\n`;
   }
   ////////////////////////////////////////////////////////////////
-
   async respaldo_Sensores2024(findControladoreDto: FindControladoreDto) {
     const { controlador, startDateTime, endDateTime } = findControladoreDto;
     try {
       const controladorEncontrado = await this.controladorRepository.findOne({
         where: { controlador },
       });
-
+  
       if (!controladorEncontrado) {
         throw new Error('Controlador no encontrado');
       }
-
+  
       const sensores =
         await this.nombresSensoresService.findsensoresBycontrolador(
           controladorEncontrado.id,
         );
-
+  
       const resultados = await Promise.all(
         sensores.map(async (sensor: any) => {
           const nombreSensor = sensor.nombre_sensor;
@@ -236,15 +237,67 @@ export class ControladoresService {
           });
         }),
       );
-
-      const datos = resultados.flat();
-      return datos;
+  
+      const datos = resultados.flat(); // Aplanar el array de resultados
+  
+      // Llamar a la función para generar los archivos por sensor
+      await this.generarArchivosPorSensor(datos);
+  
+      return { message: 'Archivos generados exitosamente para cada sensor' };
     } catch (error) {
       console.error('Error en findOne:', error);
       throw new Error('Error al obtener datos del controlador');
     }
   }
+  
+  private async generarArchivosPorSensor(datos: any[]) {
 
+    const datosAgrupados: Record<string, any[]> = {};
+  
+    datos.forEach((dato) => {
+      if (!datosAgrupados[dato.nombre_sensor]) {
+        datosAgrupados[dato.nombre_sensor] = [];
+      }
+      datosAgrupados[dato.nombre_sensor].push(dato);
+    });
+  
+    // Procesar cada grupo de datos por `nombre_sensor`
+    for (const [nombreSensor, registros] of Object.entries(datosAgrupados)) {
+      // Crear el contenido del archivo en el formato solicitado
+      const contenidoTXT = registros
+        .map((registro) => {
+          const deviceName = nombreSensor.replace(/^.*?PR-TGHP-/, "PR-TGHP ").trim();
+  
+          // Si `fecha` es un objeto `Date`, convertimos a formato `YYYY-MM-DD`
+          const fecha = registro.fecha instanceof Date 
+            ? registro.fecha.toISOString().split('T')[0] 
+            : registro.fecha;
+          
+          const time = `${fecha} ${registro.hora}`;
+  
+          return JSON.stringify({
+            deviceName,
+            humidity: registro.humedad,
+            temperature: registro.temperatura,
+            time,
+          });
+        })
+        .join('\n');
+  
+      // Crear el nombre del archivo basado en el `nombre_sensor`
+      const nombreArchivo = `${nombreSensor.replace(/ /g, '_')}.txt`;
+      const rutaArchivo = path.join(__dirname, 'archivos_sensores', nombreArchivo);
+  
+      // Crear la carpeta `archivos_sensores` si no existe
+      fs.mkdirSync(path.dirname(rutaArchivo), { recursive: true });
+  
+      // Escribir el contenido en el archivo TXT
+      fs.writeFileSync(rutaArchivo, contenidoTXT, 'utf8');
+      console.log(`Archivo generado para ${nombreSensor}: ${rutaArchivo}`);
+    }
+  }
+
+  ////////////////////////////////////////////////
   async descargarRespaldo(
     downloadControladorDto: DownloadControladorDto,
     res: Response,
