@@ -11,8 +11,6 @@ import { SensoresService } from 'src/sensores/sensores.service';
 import * as SftpClient from 'ssh2-sftp-client';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
-import * as fs from 'fs';
-import * as path from 'path';
 
 @Injectable()
 export class ControladoresService {
@@ -101,8 +99,8 @@ export class ControladoresService {
         }),
       );
 
-      const datos = resultados.flat(); // Aplanar los resultados
-      const contenidoTXT = this.generarContenidoTXT(sensores, datos); // Generar el contenido del archivo
+      const datos = resultados.flat();
+      const contenidoTXT = this.generarContenidoTXT(sensores, datos);
 
       const sftp = new SftpClient();
       try {
@@ -217,16 +215,15 @@ export class ControladoresService {
       const controladorEncontrado = await this.controladorRepository.findOne({
         where: { controlador },
       });
-  
+
       if (!controladorEncontrado) {
         throw new Error('Controlador no encontrado');
       }
-  
+
       const sensores =
         await this.nombresSensoresService.findsensoresBycontrolador(
           controladorEncontrado.id,
         );
-  
       const resultados = await Promise.all(
         sensores.map(async (sensor: any) => {
           const nombreSensor = sensor.nombre_sensor;
@@ -237,63 +234,110 @@ export class ControladoresService {
           });
         }),
       );
-  
+
       const datos = resultados.flat(); // Aplanar el array de resultados
-  
+
       // Llamar a la función para generar los archivos por sensor
       await this.generarArchivosPorSensor(datos);
-  
-      return { message: 'Archivos generados exitosamente para cada sensor' };
+
+      return {
+        message: 'Archivos generados exitosamente para cada sensor',
+      };
     } catch (error) {
       console.error('Error en findOne:', error);
       throw new Error('Error al obtener datos del controlador');
     }
   }
-  
   private async generarArchivosPorSensor(datos: any[]) {
-
     const datosAgrupados: Record<string, any[]> = {};
-  
+
     datos.forEach((dato) => {
       if (!datosAgrupados[dato.nombre_sensor]) {
         datosAgrupados[dato.nombre_sensor] = [];
       }
       datosAgrupados[dato.nombre_sensor].push(dato);
     });
-  
-    // Procesar cada grupo de datos por `nombre_sensor`
-    for (const [nombreSensor, registros] of Object.entries(datosAgrupados)) {
-      // Crear el contenido del archivo en el formato solicitado
-      const contenidoTXT = registros
-        .map((registro) => {
-          const deviceName = nombreSensor.replace(/^.*?PR-TGHP-/, "PR-TGHP ").trim();
-  
-          // Si `fecha` es un objeto `Date`, convertimos a formato `YYYY-MM-DD`
-          const fecha = registro.fecha instanceof Date 
-            ? registro.fecha.toISOString().split('T')[0] 
-            : registro.fecha;
-          
-          const time = `${fecha} ${registro.hora}`;
-  
-          return JSON.stringify({
-            deviceName,
-            humidity: registro.humedad,
-            temperature: registro.temperatura,
-            time,
-          });
-        })
-        .join('\n');
-  
-      // Crear el nombre del archivo basado en el `nombre_sensor`
-      const nombreArchivo = `${nombreSensor.replace(/ /g, '_')}.txt`;
-      const rutaArchivo = path.join(__dirname, 'archivos_sensores', nombreArchivo);
-  
-      // Crear la carpeta `archivos_sensores` si no existe
-      fs.mkdirSync(path.dirname(rutaArchivo), { recursive: true });
-  
-      // Escribir el contenido en el archivo TXT
-      fs.writeFileSync(rutaArchivo, contenidoTXT, 'utf8');
-      console.log(`Archivo generado para ${nombreSensor}: ${rutaArchivo}`);
+
+    // Configurar conexión SFTP
+    const sftp = new SftpClient();
+    try {
+      await sftp.connect({
+        host: this.configService.get('FTP_HOST'),
+        port: this.configService.get('FTP_PORT'),
+        username: this.configService.get('FTP_USER'),
+        password: this.configService.get('FTP_PASS'),
+      });
+
+      // Procesar cada grupo de datos por `nombre_sensor`
+      for (const [nombreSensor, registros] of Object.entries(datosAgrupados)) {
+        // Crear el contenido del archivo en el formato solicitado
+        const contenidoTXT = registros
+          .map((registro) => {
+            const deviceName = nombreSensor
+              .replace(/^.*?PR-TGHP-/, 'PR-TGHP ')
+              .trim();
+
+            const fecha =
+              registro.fecha instanceof Date
+                ? registro.fecha.toISOString().split('T')[0]
+                : registro.fecha;
+
+            const time = `${fecha} ${registro.hora}`;
+
+            return JSON.stringify({
+              deviceName,
+              humidity: registro.humedad,
+              temperature: registro.temperatura,
+              time,
+            });
+          })
+          .join('\n');
+
+        const rutasPersonalizadas: Record<string, string> = {
+          'Estuchado_P1_PR-TGHP-42': '/root/respaldo/2024/42/',
+          'Estuchado_P2_PR-TGHP-43': '/root/respaldo/2024/43/',
+          'Estuchado_Marchesini_2_PR-TGHP-44': '/root/respaldo/2024/44/',
+          'Pasillo_1_Bodega_Santa_Elena_PR-TGHP-45': '/root/respaldo/2024/45/',
+          'Pasillo_2_Bodega_Santa_Elena_PR-TGHP-46': '/root/respaldo/2024/46/',
+          'Pasillo_3_Bodega_Santa_Elena_PR-TGHP-47': '/root/respaldo/2024/47/',
+          'Pasillo_4_Bodega_Santa_Elena_PR-TGHP-48': '/root/respaldo/2024/48/',
+          'Difexon_PR-TGHP-49': '/root/respaldo/2024/49/',
+          'Graneles_Crema_PR-TGHP-50': '/root/respaldo/2024/50/',
+          'Bodega_Despacho_PR-TGHP-51': '/root/respaldo/2024/51/',
+          'Baño_Mujeres_PR-TGHP-52': '/root/respaldo/2024/52/',
+          'Baño_Hombres_PR-TGHP-53': '/root/respaldo/2024/53/',
+          'Bodega_Folias_PR-TGHP-54': '/root/respaldo/2024/54/',
+          'Envasado_Aluminios_PR-TGHP-55': '/root/respaldo/2024/55/',
+          'Sala_Muestreo_PR-TGHP-56': '/root/respaldo/2024/56/',
+          'Bodega_Muestreo_PR-TGHP-57': '/root/respaldo/2024/57/',
+          'Pasillo_Bodega_Muestreo_PR-TGHP-58': '/root/respaldo/2024/58/',
+          'Cámara_Fría_Bodega_PR-TEM_112':
+            '/root/respaldo/2024/PR-TEM 112 Camara Fria Bodega/',
+          Valor_bodega_muestreo_promedio:
+            '/root/respaldo/2024/valor medio bodega muestreo/',
+          Valor_medio_subterráneo: '/root/respaldo/2024/subterraneo/',
+          Valor_bodega_central_promedio:
+            '/root/respaldo/2024/valor medio bodega central/',
+        };
+
+        const fecha = new Date(Date.now() - 3 * 60 * 60 * 1000)
+          .toISOString()
+          .split('T')[0];
+
+        const nombreArchivo: string = `${nombreSensor.replace(/ /g, '_')}-${fecha}-Web.txt`;
+        const directorioBase =
+          rutasPersonalizadas[nombreSensor.replace(/ /g, '_')] ||
+          '/root/respaldo/otros/';
+        const rutaRemota: string = `${directorioBase}${nombreArchivo}`;
+
+        await sftp.put(Buffer.from(contenidoTXT), rutaRemota);
+
+        console.log(`Archivo subido para ${nombreSensor}: ${rutaRemota}`);
+      }
+    } catch (error) {
+      console.error('Error al subir archivos mediante SFTP:', error);
+    } finally {
+      await sftp.end();
     }
   }
 
