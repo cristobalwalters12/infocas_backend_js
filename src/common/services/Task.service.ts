@@ -182,7 +182,7 @@ export class TaskService {
       console.error('Error al obtener nombres de controladores:', error);
     }
   }
-  //@Cron('0 0 * * *')
+  @Cron('0 30 3 * *  1-7')
   async respaldoSensores2024() {
     const fecha_fin: Date = new Date();
     const fecha_inicio: Date = new Date();
