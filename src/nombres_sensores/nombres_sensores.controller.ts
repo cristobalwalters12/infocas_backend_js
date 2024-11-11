@@ -28,6 +28,12 @@ export class NombresSensoresController {
   create(@Body() createNombresSensoreDto: CreateNombresSensoreDto) {
     return this.nombresSensoresService.create(createNombresSensoreDto);
   }
+  @Post('/SensoresControlador')
+  FindSensoresControlador(@Body() body: { id: number }) {
+    const id = body.id;
+    console.log(id);
+    return this.nombresSensoresService.findsensoresBycontrolador(id);
+  }
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
