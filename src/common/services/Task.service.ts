@@ -186,7 +186,7 @@ export class TaskService {
   async respaldoSensores2024() {
     const fecha_fin: Date = new Date();
     const fecha_inicio: Date = new Date();
-    fecha_inicio.setDate(fecha_inicio.getDate() - 1);
+    fecha_inicio.setDate(fecha_inicio.getDate() - 14);
     const fecha_inicio_str: string = fecha_inicio.toISOString().split('T')[0];
     const fecha_fin_str: string = fecha_fin.toISOString().split('T')[0];
     const controlador: string = 'UG65';
