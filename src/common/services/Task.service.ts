@@ -5,6 +5,7 @@ import { NombresSensoresService } from '../../nombres_sensores/nombres_sensores.
 import { ControladoresService } from '../../controladores/controladores.service';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
+
 @Injectable()
 export class TaskService {
   constructor(
@@ -23,6 +24,7 @@ export class TaskService {
       const now = new Date();
       now.setHours(now.getHours() - 1);
       const hourStart: string = now.toTimeString().split(' ')[0];
+
       const current = new Date();
       const hourEnd: string = current.toTimeString().split(' ')[0];
       const sensoresSinDatos: string[] = [];
@@ -35,7 +37,14 @@ export class TaskService {
           startDateTime: formattedDate + ' ' + hourStart,
           endDateTime: formattedDate + ' ' + hourEnd,
         });
-        // si se encuentra datos en el rango de horas se imprime en consola
+        console.log('-------------------');
+        console.log(hourStart);
+        console.log(hourEnd);
+        console.log('-------------------');
+        console.log(formattedDate);
+        console.log(
+          `Resultado de la búsqueda: ${result.length} registros encontrados`,
+        );
         if (result.length > 0) {
           console.log('-------------------');
           console.log(
