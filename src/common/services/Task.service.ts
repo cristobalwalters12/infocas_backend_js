@@ -20,10 +20,11 @@ export class TaskService {
       const sensores = await this.nombresSensoresService.findAll();
       const today: Date = new Date();
       const formattedDate: string = today.toISOString().split('T')[0];
-      const hourStart: string = '00:00:00';
       const now = new Date();
       now.setHours(now.getHours() - 1);
-      const hourEnd: string = now.toTimeString().split(' ')[0];
+      const hourStart: string = now.toTimeString().split(' ')[0];
+      const current = new Date();
+      const hourEnd: string = current.toTimeString().split(' ')[0];
       const sensoresSinDatos: string[] = [];
       const sensoressinDatosId: number[] = [];
       const dataForHTML = [];
