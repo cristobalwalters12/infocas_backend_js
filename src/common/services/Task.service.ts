@@ -16,16 +16,18 @@ export class TaskService {
   ) {}
 
   @Cron('0,30 * * * 1-5')
+  //@Cron('*/2 * * * 1-5')
   async MailJob() {
     try {
       const sensores = await this.nombresSensoresService.findAll();
       const today: Date = new Date();
       const formattedDate: string = today.toISOString().split('T')[0];
       const now = new Date();
-      now.setHours(now.getHours() - 1);
+      now.setHours(now.getHours() - 4);
       const hourStart: string = now.toTimeString().split(' ')[0];
 
       const current = new Date();
+      current.setHours(current.getHours() - 3);
       const hourEnd: string = current.toTimeString().split(' ')[0];
       const sensoresSinDatos: string[] = [];
       const sensoressinDatosId: number[] = [];
