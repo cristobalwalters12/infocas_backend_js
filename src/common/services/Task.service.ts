@@ -22,6 +22,7 @@ export class TaskService {
       const formattedDate: string = today.toISOString().split('T')[0];
       const hourStart: string = '00:00:00';
       const now = new Date();
+      now.setHours(now.getHours() - 1);
       const hourEnd: string = now.toTimeString().split(' ')[0];
       const sensoresSinDatos: string[] = [];
       const sensoressinDatosId: number[] = [];
