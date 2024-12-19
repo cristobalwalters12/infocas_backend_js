@@ -14,15 +14,15 @@ export class TaskService {
     private controladoresService: ControladoresService,
   ) {}
 
-  @Cron('0 20 5 * *  1-5')
+  @Cron('0,30 * * * 1-5')
   async MailJob() {
     try {
       const sensores = await this.nombresSensoresService.findAll();
-      const yesterday: Date = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const formattedDate: string = yesterday.toISOString().split('T')[0];
-      const hourStart: string = '00:01:00';
-      const hourEnd: string = '00:34:00';
+      const today: Date = new Date();
+      const formattedDate: string = today.toISOString().split('T')[0];
+      const hourStart: string = '00:00:00';
+      const now = new Date();
+      const hourEnd: string = now.toTimeString().split(' ')[0];
       const sensoresSinDatos: string[] = [];
       const sensoressinDatosId: number[] = [];
       const dataForHTML = [];
@@ -35,7 +35,11 @@ export class TaskService {
         });
         // si se encuentra datos en el rango de horas se imprime en consola
         if (result.length > 0) {
-          console.log(result);
+          console.log('-------------------');
+          console.log(
+            `sensores con datos del sensor ${sensor.nombre_sensor} actualizados a la fecha ${formattedDate} con horas entre ${hourStart} y ${hourEnd}`,
+          );
+          console.log('-------------------');
         } else {
           sensoresSinDatos.push(sensor.nombre_sensor);
           sensoressinDatosId.push(sensor.id_sensor);
@@ -103,7 +107,7 @@ export class TaskService {
                 <div class="header">
                     <h1>Sensores sin datos</h1>
                     <div>
-                        <img src="https://infocas-js.vercel.app/unnamed1.png" alt="Logo" width="150">   
+                        <img src="https://www.infocas.cl/Infocas.png" alt="Logo" width="150">   
                     </div>
                 </div>
                 <div class="content">
