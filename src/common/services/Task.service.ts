@@ -19,7 +19,7 @@ export class TaskService {
   //@Cron('*/2 * * * 1-5')
   async MailJob() {
     try {
-      const timeZone = 'America/Santiago'; // Cambia a tu zona horaria
+      const timeZone = 'America/Santiago';
       const formatter = new Intl.DateTimeFormat('en-US', {
         timeZone: timeZone,
         year: 'numeric',
@@ -48,10 +48,6 @@ export class TaskService {
           endDateTime: formattedDate + ' ' + hourEnd,
         });
         console.log('-------------------');
-        console.log(hourStart);
-        console.log(hourEnd);
-        console.log('-------------------');
-        console.log(formattedDate);
         console.log(
           `Resultado de la búsqueda: ${result.length} registros encontrados`,
         );
