@@ -19,13 +19,21 @@ export class TaskService {
   //@Cron('*/2 * * * 1-5')
   async MailJob() {
     try {
+      const timeZone = 'America/Santiago'; // Cambia a tu zona horaria
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      });
+      const today = new Date();
+      const parts = formatter.formatToParts(today);
+      const formattedDate: string = `${parts.find((p) => p.type === 'year')?.value}-${parts.find((p) => p.type === 'month')?.value}-${parts.find((p) => p.type === 'day')?.value}`;
+      console.log(`Fecha ajustada a ${timeZone}: ${formattedDate}`);
       const sensores = await this.nombresSensoresService.findAll();
-      const today: Date = new Date();
-      const formattedDate: string = today.toISOString().split('T')[0];
       const now = new Date();
       now.setHours(now.getHours() - 4);
       const hourStart: string = now.toTimeString().split(' ')[0];
-
       const current = new Date();
       current.setHours(current.getHours() - 3);
       const hourEnd: string = current.toTimeString().split(' ')[0];
