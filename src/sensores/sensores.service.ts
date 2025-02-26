@@ -68,18 +68,28 @@ export class SensoresService {
   async findRangeInformation(informationDto: InformationDto) {
     const { nombreSensor, startDateTime, endDateTime } = informationDto;
 
-    const query =
-      'SELECT * FROM `sensores` ' +
-      'INNER JOIN nombres_sensores ON nombres_sensores.id_sensor = sensores.id_sensor ' +
-      'WHERE nombres_sensores.nombre_sensor = ? ' +
-      "AND CONCAT(fecha, ' ', hora) BETWEEN ? AND ? " +
-      'ORDER BY fecha, hora ASC';
+    const query = `
+    SELECT 
+      sensores.*,
+      nombres_sensores.nombre_sensor,
+      CASE 
+        WHEN nombres_sensores.nombre_sensor = 'CAMARA FRIA CASINO PR-TGHP-65' THEN 0
+        ELSE sensores.humedad
+      END AS humedad
+    FROM sensores
+    INNER JOIN nombres_sensores ON nombres_sensores.id_sensor = sensores.id_sensor
+    WHERE nombres_sensores.nombre_sensor = ?
+      AND CONCAT(fecha, ' ', hora) BETWEEN ? AND ?
+    ORDER BY fecha, hora ASC
+  `;
 
     const result = await this.sensoresRepository.query(query, [
       nombreSensor,
       startDateTime,
       endDateTime,
     ]);
+
+    console.log(result);
 
     return result;
   }
@@ -90,9 +100,16 @@ export class SensoresService {
     const query = `
     SELECT ROUND(MIN(temperatura),2) as minima_temperatura,
            ROUND(MAX(temperatura),2) as maxima_temperatura,
-           ROUND(MIN(humedad),2) as minima_humedad,
-           ROUND(MAX(humedad),2) as maxima_humedad
-    FROM sensores INNER JOIN nombres_sensores ON nombres_sensores.id_sensor = sensores.id_sensor
+           CASE 
+             WHEN nombres_sensores.nombre_sensor = 'CAMARA FRIA CASINO PR-TGHP-65' THEN 0
+             ELSE ROUND(MIN(humedad),2)
+           END as minima_humedad,
+           CASE 
+             WHEN nombres_sensores.nombre_sensor = 'CAMARA FRIA CASINO PR-TGHP-65' THEN 0
+             ELSE ROUND(MAX(humedad),2)
+           END as maxima_humedad
+    FROM sensores 
+    INNER JOIN nombres_sensores ON nombres_sensores.id_sensor = sensores.id_sensor
     WHERE nombres_sensores.nombre_sensor = ?
       AND CONCAT(fecha, ' ', hora) BETWEEN ? AND ?
     ORDER BY fecha, hora ASC
