@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUsuarioDto, UpdateUsuarioDto, LoginUserDto } from './dto';
+import { TurnstileService } from '../common/services/reCAPTCHA.service';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -19,6 +20,7 @@ export class UsuarioService {
     @InjectRepository(Usuario)
     private readonly usuarioRepository: Repository<Usuario>,
     private readonly jwtService: JwtService,
+    private readonly recaptchaService: TurnstileService,
   ) {}
 
   async create(createUsuarioDto: CreateUsuarioDto) {
@@ -50,7 +52,9 @@ export class UsuarioService {
   }
   async login(loginUserDto: LoginUserDto) {
     try {
-      const { contraseña, correo } = loginUserDto;
+      const { contraseña, correo, turnstileToken } = loginUserDto;
+
+      await this.recaptchaService.validateToken(turnstileToken);
       const usuario = await this.usuarioRepository.findOne({
         where: { correo: correo },
         select: [

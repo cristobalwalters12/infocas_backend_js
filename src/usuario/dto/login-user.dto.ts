@@ -9,4 +9,7 @@ export class LoginUserDto {
   @IsNotEmpty()
   @IsString()
   contraseña: string;
+  @IsNotEmpty()
+  @IsString()
+  turnstileToken: string;
 }
