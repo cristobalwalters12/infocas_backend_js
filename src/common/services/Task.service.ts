@@ -58,10 +58,10 @@ export class TaskService {
           );
           console.log('-------------------');
         } else {
-          if (sensor.nombre_sensor !== 'PATENTE CAMION KGFS86 PR-TGHP-63') {
-            sensoresSinDatos.push(sensor.nombre_sensor);
-            sensoressinDatosId.push(sensor.id_sensor);
-          }
+          //if (sensor.nombre_sensor !== 'PATENTE CAMION KGFS86 PR-TGHP-63') {
+          sensoresSinDatos.push(sensor.nombre_sensor);
+          sensoressinDatosId.push(sensor.id_sensor);
+          //}
         }
       }
       for (const id of sensoressinDatosId) {
