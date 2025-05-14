@@ -214,7 +214,7 @@ export class TaskService {
     const fecha_fin_str: string = fecha_fin.toISOString().split('T')[0];
     const controlador: string = 'UG65';
     try {
-      await this.controladoresService.respaldo_Sensores2024({
+      await this.controladoresService.respaldo_SensoresUG65P1({
         controlador,
         startDateTime: fecha_inicio_str,
         endDateTime: fecha_fin_str,

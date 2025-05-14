@@ -209,12 +209,13 @@ export class ControladoresService {
     return `${cabeceraBase},${columnas},Trigger\n`;
   }
   ////////////////////////////////////////////////////////////////
-  async respaldo_Sensores2024(findControladoreDto: FindControladoreDto) {
+  async respaldo_SensoresUG65P1(findControladoreDto: FindControladoreDto) {
     const { controlador, startDateTime, endDateTime } = findControladoreDto;
     try {
       const controladorEncontrado = await this.controladorRepository.findOne({
         where: { controlador },
       });
+      console.log(controladorEncontrado);
 
       if (!controladorEncontrado) {
         throw new Error('Controlador no encontrado');
@@ -227,6 +228,7 @@ export class ControladoresService {
       const resultados = await Promise.all(
         sensores.map(async (sensor: any) => {
           const nombreSensor = sensor.nombre_sensor;
+          console.log(nombreSensor);
           return await this.sensoresService.findRangeInformation({
             nombreSensor,
             startDateTime,
@@ -294,40 +296,55 @@ export class ControladoresService {
           .join('\n');
 
         const rutasPersonalizadas: Record<string, string> = {
-          'Estuchado_P1_PR-TGHP-42': '/root/respaldo/2024/42/',
-          'Estuchado_P2_PR-TGHP-43': '/root/respaldo/2024/43/',
-          'Estuchado_Marchesini_2_PR-TGHP-44': '/root/respaldo/2024/44/',
-          'Pasillo_1_Bodega_Santa_Elena_PR-TGHP-45': '/root/respaldo/2024/45/',
-          'Pasillo_2_Bodega_Santa_Elena_PR-TGHP-46': '/root/respaldo/2024/46/',
-          'Pasillo_3_Bodega_Santa_Elena_PR-TGHP-47': '/root/respaldo/2024/47/',
-          'Pasillo_4_Bodega_Santa_Elena_PR-TGHP-48': '/root/respaldo/2024/48/',
-          'Difexon_PR-TGHP-49': '/root/respaldo/2024/49/',
-          'Graneles_Crema_PR-TGHP-50': '/root/respaldo/2024/50/',
-          'Bodega_Despacho_PR-TGHP-51': '/root/respaldo/2024/51/',
-          'Baño_Mujeres_PR-TGHP-52': '/root/respaldo/2024/52/',
-          'Baño_Hombres_PR-TGHP-53': '/root/respaldo/2024/53/',
-          'Bodega_Folias_PR-TGHP-54': '/root/respaldo/2024/54/',
-          'Envasado_Aluminios_PR-TGHP-55': '/root/respaldo/2024/55/',
-          'Sala_Muestreo_PR-TGHP-56': '/root/respaldo/2024/56/',
-          'Bodega_Muestreo_PR-TGHP-57': '/root/respaldo/2024/57/',
-          'Pasillo_Bodega_Muestreo_PR-TGHP-58': '/root/respaldo/2024/58/',
-          'Cámara_Fría_Bodega_PR-TEM_112':
-            '/root/respaldo/2024/PR-TEM 112 Camara Fria Bodega/',
-          Valor_bodega_muestreo_promedio:
-            '/root/respaldo/2024/valor medio bodega muestreo/',
-          Valor_medio_subterráneo: '/root/respaldo/2024/subterraneo/',
-          Valor_bodega_central_promedio:
-            '/root/respaldo/2024/valor medio bodega central/',
+          'PESAJE SALA N°1 PR-TGHP-15': '/root/respaldo/UG65P1/15/',
+          'PESAJE SALA N°2 PR-TGHP-16': '/root/respaldo/UG65P1/16/',
+          'BLISTERA MARCHESINI 1 PR-TGHP-31': '/root/respaldo/UG65P1/31/',
+          'LLENADORA COMAS PR-TGHP-32': '/root/respaldo/UG65P1/32/',
+          'REACTOR CREMA PR-TGHP-33': '/root/respaldo/UG65P1/33/',
+          'ENVASADO CREMAS TGM PR-TGHP-34': '/root/respaldo/UG65P1/34/',
+          'REACTOR LIQUIDOS PR-TGHP-35': '/root/respaldo/UG65P1/35/',
+          'BODEGA DE LÍQUIDOS PR-TGHP-41': '/root/respaldo/UG65P1/41/',
+          'ESTUCHADO_P1_PR-TGHP-42': '/root/respaldo/UG65P1/42/',
+          'ESTUCHADO P2 PR-TGHP-43': '/root/respaldo/UG65P1/43/',
+          'ESTUCHADO MARCHESINI 2 PR-TGHP-44': '/root/respaldo/UG65P1/44/',
+          'PASILLO 1 BODEGA SANTA ELENA PR-TGHP-45':
+            '/root/respaldo/UG65P1/45/',
+          'PASILLO 2 BODEGA SANTA ELENA PR-TGHP-46':
+            '/root/respaldo/UG65P1/46/',
+          'PASILLO 3 BODEGA SANTA ELENA PR-TGHP-47':
+            '/root/respaldo/UG65P1/47/',
+          'PASILLO 4 BODEGA SANTA ELENA PR-TGHP-48':
+            '/root/respaldo/UG65P1/48/',
+          'DIFEXON PR-TGHP-49': '/root/respaldo/UG65P1/49/',
+          'GRANELES CREMA PR-TGHP-50': '/root/respaldo/UG65P1/50/',
+          'BODEGA DESPACHO PR-TGHP-51': '/root/respaldo/UG65P1/51/',
+          'BAÑO MUJERES PR-TGHP-52': '/root/respaldo/UG65P1/52/',
+          'BAÑO HOMBRES PR-TGHP-53': '/root/respaldo/UG65P1/53/',
+          'BODEGA FOLIAS PR-TGHP-54': '/root/respaldo/UG65P1/54/',
+          'ENVASADOS ALUMINIOS PR-TGHP-55': '/root/respaldo/UG65P1/55/',
+          'SALA MUESTREO PR-TGHP-56': '/root/respaldo/UG65P1/56/',
+          'BODEGA MUESTREO PR-TGHP-57': '/root/respaldo/UG65P1/57/',
+          'PASILLO BODEGA MUESTREO PR-TGHP-58': '/root/respaldo/UG65P1/58/',
+          'CAMARA FRIA PR-TEM-122':
+            '/root/respaldo/UG65P1/PR-TEM 112 Camara Fria Bodega/',
+          'VALOR BODEGA MUESTREO PROMEDIO':
+            '/root/respaldo/UG65P1/valor medio bodega muestreo/',
+          'VALOR MEDIO SUBTERRÁNEO': '/root/respaldo/UG65P1/subterraneo/',
+          'VALOR BODEGA CENTRAL PROMEDIO':
+            '/root/respaldo/UG65P1/valor medio bodega central/',
+          'VALOR MEDIO CONTROL UMA 34':
+            '/root/respaldo/UG65P1/valor medio control UMA 34/',
         };
 
         const fecha = new Date(Date.now() - 3 * 60 * 60 * 1000)
           .toISOString()
           .split('T')[0];
-
+        console.log(nombreSensor);
         const nombreArchivo: string = `${nombreSensor.replace(/ /g, '_')}-${fecha}-Web.txt`;
+        console.log(nombreArchivo);
         const directorioBase =
-          rutasPersonalizadas[nombreSensor.replace(/ /g, '_')] ||
-          '/root/respaldo/otros/';
+          rutasPersonalizadas[nombreSensor] || '/root/respaldo/otros/';
+        console.log(directorioBase);
         const rutaRemota: string = `${directorioBase}${nombreArchivo}`;
 
         await sftp.put(Buffer.from(contenidoTXT), rutaRemota);

@@ -89,7 +89,7 @@ export class SensoresService {
       endDateTime,
     ]);
 
-    console.log(result);
+    //console.log(result);
 
     return result;
   }
