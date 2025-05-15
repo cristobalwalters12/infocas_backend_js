@@ -228,7 +228,7 @@ export class ControladoresService {
       const resultados = await Promise.all(
         sensores.map(async (sensor: any) => {
           const nombreSensor = sensor.nombre_sensor;
-          console.log(nombreSensor);
+          //console.log(nombreSensor);
           return await this.sensoresService.findRangeInformation({
             nombreSensor,
             startDateTime,
