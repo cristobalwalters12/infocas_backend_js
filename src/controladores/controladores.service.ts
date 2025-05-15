@@ -228,7 +228,7 @@ export class ControladoresService {
       const resultados = await Promise.all(
         sensores.map(async (sensor: any) => {
           const nombreSensor = sensor.nombre_sensor;
-          //console.log(nombreSensor);
+          console.log(nombreSensor);
           return await this.sensoresService.findRangeInformation({
             nombreSensor,
             startDateTime,
@@ -345,7 +345,7 @@ export class ControladoresService {
           'BODEGA MUESTREO PR-TGHP-57': '/root/respaldo/UG65P1/57/',
           'PASILLO BODEGA MUESTREO PR-TGHP-58': '/root/respaldo/UG65P1/58/',
           'PATENTE CAMION KGFS86 PR-TGHP-63': '/root/respaldo/CAMIONES/63/',
-          'PATENTE CAMION KGFS87 PR-TGHP-64': '/root/respaldo/CAMIONES/64/',
+          'PATENTE CAMION DBDH PR-TGHP-64': '/root/respaldo/CAMIONES/64/',
           'CAMARA FRIA CASINO PR-TGHP-65': '/root/respaldo/UG65P2/65/',
           'CAMARA FRIA PR-TEM-122':
             '/root/respaldo/UG65P1/PR-TEM 112 Camara Fria Bodega/',
