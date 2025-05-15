@@ -209,7 +209,7 @@ export class ControladoresService {
     return `${cabeceraBase},${columnas},Trigger\n`;
   }
   ////////////////////////////////////////////////////////////////
-  async respaldo_SensoresUG65P1(findControladoreDto: FindControladoreDto) {
+  async respaldo_Sensores2025(findControladoreDto: FindControladoreDto) {
     const { controlador, startDateTime, endDateTime } = findControladoreDto;
     try {
       const controladorEncontrado = await this.controladorRepository.findOne({
@@ -228,7 +228,7 @@ export class ControladoresService {
       const resultados = await Promise.all(
         sensores.map(async (sensor: any) => {
           const nombreSensor = sensor.nombre_sensor;
-          console.log(nombreSensor);
+          //console.log(nombreSensor);
           return await this.sensoresService.findRangeInformation({
             nombreSensor,
             startDateTime,
@@ -298,11 +298,30 @@ export class ControladoresService {
         const rutasPersonalizadas: Record<string, string> = {
           'PESAJE SALA N°1 PR-TGHP-15': '/root/respaldo/UG65P1/15/',
           'PESAJE SALA N°2 PR-TGHP-16': '/root/respaldo/UG65P1/16/',
+          'SALA VÍA HUMEDA 1 PR-TGHP-17': '/root/respaldo/UG65P2/17/',
+          'SALA VÍA HUMEDA 2 PR-TGHP-18': '/root/respaldo/UG65P2/18/',
+          'SALA VÍA SECA M240 PR-TGHP-19': '/root/respaldo/UG65P2/19/',
+          'SALA VÍA SECA M120 PR-TGHP-20': '/root/respaldo/UG65P2/20/',
+          'TABLETERA N°1 PR-TGHP-21': '/root/respaldo/UG65P2/21/',
+          'TABLETERA N°2 PR-TGHP-22': '/root/respaldo/UG65P2/22/',
+          'TABLETERA N°3 PR-TGHP-23': '/root/respaldo/UG65P2/23/',
+          'TABLETERA N°4 PR-TGHP-24': '/root/respaldo/UG65P2/24/',
+          'TABLETERA N°5 PR-TGHP-25': '/root/respaldo/UG65P2/25/',
+          'TABLETERA N°6 PR-TGHP-26': '/root/respaldo/UG65P2/26/',
+          'RECUBRIMIENTO N°1 PR-TGHP-27': '/root/respaldo/UG65P2/27/',
+          'RECUBRIMIENTO N°2 PR-TGHP-28': '/root/respaldo/UG65P2/28/',
+          'RECUBRIMIENTO N°3 PR-TGHP-29': '/root/respaldo/UG65P2/29/',
+          'SALA FRACCIONAMIENTO PR-TGHP-30': '/root/respaldo/UG65SUB/30',
           'BLISTERA MARCHESINI 1 PR-TGHP-31': '/root/respaldo/UG65P1/31/',
           'LLENADORA COMAS PR-TGHP-32': '/root/respaldo/UG65P1/32/',
           'REACTOR CREMA PR-TGHP-33': '/root/respaldo/UG65P1/33/',
           'ENVASADO CREMAS TGM PR-TGHP-34': '/root/respaldo/UG65P1/34/',
           'REACTOR LIQUIDOS PR-TGHP-35': '/root/respaldo/UG65P1/35/',
+          'BLISTERA ROMACO 1 PR-TGHP-36': '/root/respaldo/UG65P1/36/',
+          'BLISTERA ROMACO 2 PR-TGHP-37': '/root/respaldo/UG65P1/37/',
+          'BLISTERA MARCHESINI 2 PR-TGHP-38': '/root/respaldo/UG65P1/38/',
+          'LÍNEA MANUAL 1 PR-TGHP-39': '/root/respaldo/UG65SUB/39/',
+          'PASILLO GRANULADOS PR-TGHP-40': '/root/respaldo/UG65P1/40/',
           'BODEGA DE LÍQUIDOS PR-TGHP-41': '/root/respaldo/UG65P1/41/',
           'ESTUCHADO_P1_PR-TGHP-42': '/root/respaldo/UG65P1/42/',
           'ESTUCHADO P2 PR-TGHP-43': '/root/respaldo/UG65P1/43/',
@@ -325,6 +344,9 @@ export class ControladoresService {
           'SALA MUESTREO PR-TGHP-56': '/root/respaldo/UG65P1/56/',
           'BODEGA MUESTREO PR-TGHP-57': '/root/respaldo/UG65P1/57/',
           'PASILLO BODEGA MUESTREO PR-TGHP-58': '/root/respaldo/UG65P1/58/',
+          'PATENTE CAMION KGFS86 PR-TGHP-63': '/root/respaldo/CAMIONES/63/',
+          'PATENTE CAMION KGFS87 PR-TGHP-64': '/root/respaldo/CAMIONES/64/',
+          'CAMARA FRIA CASINO PR-TGHP-65': '/root/respaldo/UG65P2/65/',
           'CAMARA FRIA PR-TEM-122':
             '/root/respaldo/UG65P1/PR-TEM 112 Camara Fria Bodega/',
           'VALOR BODEGA MUESTREO PROMEDIO':

@@ -44,8 +44,6 @@ export class ControladoresController {
   async respaldarSensores2024(
     @Body() findControladoreDto: FindControladoreDto,
   ) {
-    return this.controladoresService.respaldo_SensoresUG65P1(
-      findControladoreDto,
-    );
+    return this.controladoresService.respaldo_Sensores2025(findControladoreDto);
   }
 }

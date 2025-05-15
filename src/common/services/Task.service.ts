@@ -206,7 +206,7 @@ export class TaskService {
     }
   }
   @Cron('0 30 3 * *  1-7')
-  async respaldoSensores2024() {
+  async respaldoSensoresUG65() {
     const fecha_fin: Date = new Date();
     const fecha_inicio: Date = new Date();
     fecha_inicio.setDate(fecha_inicio.getDate() - 14);
@@ -214,7 +214,25 @@ export class TaskService {
     const fecha_fin_str: string = fecha_fin.toISOString().split('T')[0];
     const controlador: string = 'UG65';
     try {
-      await this.controladoresService.respaldo_SensoresUG65P1({
+      await this.controladoresService.respaldo_Sensores2025({
+        controlador,
+        startDateTime: fecha_inicio_str,
+        endDateTime: fecha_fin_str,
+      });
+    } catch (error) {
+      console.error('Error al obtener nombres de sensores:', error);
+    }
+  }
+  @Cron('0 40 3 * *  1-7')
+  async respaldoSensoresUG65P2() {
+    const fecha_fin: Date = new Date();
+    const fecha_inicio: Date = new Date();
+    fecha_inicio.setDate(fecha_inicio.getDate() - 14);
+    const fecha_inicio_str: string = fecha_inicio.toISOString().split('T')[0];
+    const fecha_fin_str: string = fecha_fin.toISOString().split('T')[0];
+    const controlador: string = 'UG65P2';
+    try {
+      await this.controladoresService.respaldo_Sensores2025({
         controlador,
         startDateTime: fecha_inicio_str,
         endDateTime: fecha_fin_str,
