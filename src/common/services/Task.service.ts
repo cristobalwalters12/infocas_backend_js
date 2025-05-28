@@ -15,7 +15,7 @@ export class TaskService {
     private controladoresService: ControladoresService,
   ) {}
 
-  @Cron('0,30 * * * 1-5')
+  @Cron('0,30 12-22 * * 1-5')
   //@Cron('*/2 * * * 1-5')
   async MailJob() {
     try {
