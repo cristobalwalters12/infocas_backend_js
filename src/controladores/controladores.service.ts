@@ -296,6 +296,20 @@ export class ControladoresService {
           .join('\n');
 
         const rutasPersonalizadas: Record<string, string> = {
+          'BODEGA SUB N1P4 PR-TGHP-01': '/root/respaldo/UG65SUB/01/',
+          'BODEGA SUB N2P4 PR-TGHP-02': '/root/respaldo/UG65SUB/02/',
+          'BODEGA SUB N3P23 PR-TGHP-03': '/root/respaldo/UG65SUB/03/',
+          'BODEGA SUB N4P33 PR-TGHP-04': '/root/respaldo/UG65SUB/04/',
+          'BODEGA SUB N3P27 PR-TGHP-05': '/root/respaldo/UG65SUB/05/',
+          'BODEGA SUB N4P37 PR-TGHP-06': '/root/respaldo/UG65SUB/06/',
+          'BODEGA SUB N_P_ PR-TGHP-07': '/root/respaldo/UG65SUB/07/',
+          'BODEGA SUB N2P15 PR-TGHP-08': '/root/respaldo/UG65SUB/08/',
+          'BODEGA SUB N4P35 PR-TGHP-09': '/root/respaldo/UG65SUB/09/',
+          'BODEGA SUB N3P20 PR-TGHP-10': '/root/respaldo/UG65SUB/10/',
+          'BODEGA SUB N4P30 PR-TGHP-11': '/root/respaldo/UG65SUB/11/',
+          'BODEGA SUB N3P24 PR-TGHP-12': '/root/respaldo/UG65SUB/12/',
+          'BODEGA SUB N1P2 PR-TGHP-13': '/root/respaldo/UG65SUB/13/',
+          'BODEGA SUB N2P11 PR-TGHP-14': '/root/respaldo/UG65SUB/14/',
           'PESAJE SALA N°1 PR-TGHP-15': '/root/respaldo/UG65P1/15/',
           'PESAJE SALA N°2 PR-TGHP-16': '/root/respaldo/UG65P1/16/',
           'SALA VÍA HUMEDA 1 PR-TGHP-17': '/root/respaldo/UG65P2/17/',
@@ -311,7 +325,7 @@ export class ControladoresService {
           'RECUBRIMIENTO N°1 PR-TGHP-27': '/root/respaldo/UG65P2/27/',
           'RECUBRIMIENTO N°2 PR-TGHP-28': '/root/respaldo/UG65P2/28/',
           'RECUBRIMIENTO N°3 PR-TGHP-29': '/root/respaldo/UG65P2/29/',
-          'SALA FRACCIONAMIENTO PR-TGHP-30': '/root/respaldo/UG65SUB/30',
+          'SALA FRACCIONAMIENTO PR-TGHP-30': '/root/respaldo/UG65SUB/30/',
           'BLISTERA MARCHESINI 1 PR-TGHP-31': '/root/respaldo/UG65P1/31/',
           'LLENADORA COMAS PR-TGHP-32': '/root/respaldo/UG65P1/32/',
           'REACTOR CREMA PR-TGHP-33': '/root/respaldo/UG65P1/33/',
@@ -323,7 +337,7 @@ export class ControladoresService {
           'LÍNEA MANUAL 1 PR-TGHP-39': '/root/respaldo/UG65SUB/39/',
           'PASILLO GRANULADOS PR-TGHP-40': '/root/respaldo/UG65P1/40/',
           'BODEGA DE LÍQUIDOS PR-TGHP-41': '/root/respaldo/UG65P1/41/',
-          'ESTUCHADO_P1_PR-TGHP-42': '/root/respaldo/UG65P1/42/',
+          'ESTUCHADO P1 PR-TGHP-42': '/root/respaldo/UG65P1/42/',
           'ESTUCHADO P2 PR-TGHP-43': '/root/respaldo/UG65P1/43/',
           'ESTUCHADO MARCHESINI 2 PR-TGHP-44': '/root/respaldo/UG65P1/44/',
           'PASILLO 1 BODEGA SANTA ELENA PR-TGHP-45':
@@ -344,11 +358,19 @@ export class ControladoresService {
           'SALA MUESTREO PR-TGHP-56': '/root/respaldo/UG65P1/56/',
           'BODEGA MUESTREO PR-TGHP-57': '/root/respaldo/UG65P1/57/',
           'PASILLO BODEGA MUESTREO PR-TGHP-58': '/root/respaldo/UG65P1/58/',
+          'ESTUCHADORA CREMA PR-TGHP-59': '/root/respaldo/UG65P1/59/',
+          'BODEGA PULMÓN PR-TGHP-60': '/root/respaldo/UG65 PESAJE/60/',
+          'BODEGA PULMÓN FONDO PR-TGHP-61': '/root/respaldo/UG65 PESAJE/61/',
+          'INFLAMABLES PR-TGHP-62': '/root/respaldo/UG65 PESAJE/62/',
+          'VALOR MEDIO BODEGA PULMÓN':
+            '/root/respaldo/UG65 PESAJE/valor medio bodega pulmon/',
           'PATENTE CAMION KGFS86 PR-TGHP-63': '/root/respaldo/CAMIONES/63/',
           'PATENTE CAMION DBDH PR-TGHP-64': '/root/respaldo/CAMIONES/64/',
           'CAMARA FRIA CASINO PR-TGHP-65': '/root/respaldo/UG65P2/65/',
           'CAMARA FRIA PR-TEM-122':
             '/root/respaldo/UG65P1/PR-TEM 112 Camara Fria Bodega/',
+          'CAMARA FRESCA PR-TEM-123':
+            '/root/respaldo/UG65P1/PR-TEM 113 Camara Fresca Bodega/',
           'VALOR BODEGA MUESTREO PROMEDIO':
             '/root/respaldo/UG65P1/valor medio bodega muestreo/',
           'VALOR MEDIO SUBTERRÁNEO': '/root/respaldo/UG65P1/subterraneo/',
