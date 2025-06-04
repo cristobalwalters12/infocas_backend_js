@@ -46,4 +46,8 @@ export class ControladoresController {
   ) {
     return this.controladoresService.respaldo_Sensores2025(findControladoreDto);
   }
+  @Post('/test')
+  async test() {
+    return this.controladoresService.test();
+  }
 }

@@ -11,6 +11,8 @@ import { SensoresService } from 'src/sensores/sensores.service';
 import * as SftpClient from 'ssh2-sftp-client';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class ControladoresService {
@@ -20,6 +22,7 @@ export class ControladoresService {
     private sensoresService: SensoresService,
     private nombresSensoresService: NombresSensoresService,
     private configService: ConfigService,
+    private readonly httpService: HttpService,
   ) {}
   create(createControladoreDto: CreateControladoreDto) {
     return createControladoreDto;
@@ -331,9 +334,9 @@ export class ControladoresService {
           'REACTOR CREMA PR-TGHP-33': '/root/respaldo/UG65P1/33/',
           'ENVASADO CREMAS TGM PR-TGHP-34': '/root/respaldo/UG65P1/34/',
           'REACTOR LIQUIDOS PR-TGHP-35': '/root/respaldo/UG65P1/35/',
-          'BLISTERA ROMACO 1 PR-TGHP-36': '/root/respaldo/UG65P1/36/',
-          'BLISTERA ROMACO 2 PR-TGHP-37': '/root/respaldo/UG65P1/37/',
-          'BLISTERA MARCHESINI 2 PR-TGHP-38': '/root/respaldo/UG65P1/38/',
+          'BLISTERA ROMACO 1 PR-TGHP-36': '/root/respaldo/UG65P2/36/',
+          'BLISTERA ROMACO 2 PR-TGHP-37': '/root/respaldo/UG65P2/37/',
+          'BLISTERA MARCHESINI 2 PR-TGHP-38': '/root/respaldo/UG65P2/38/',
           'LÍNEA MANUAL 1 PR-TGHP-39': '/root/respaldo/UG65SUB/39/',
           'PASILLO GRANULADOS PR-TGHP-40': '/root/respaldo/UG65P1/40/',
           'BODEGA DE LÍQUIDOS PR-TGHP-41': '/root/respaldo/UG65P1/41/',
@@ -433,6 +436,27 @@ export class ControladoresService {
       res.status(500).json({ message: 'Error al descargar el archivo' });
     } finally {
       await sftp.end();
+    }
+  }
+
+  async test() {
+    const url = 'http://127.0.0.1:5678/webhook-test/test';
+
+    const payload = {
+      message: '¡Hola desde NestJS!',
+      date: new Date().toISOString(),
+    };
+
+    try {
+      const response$ = this.httpService.post(url, payload);
+      const response = await lastValueFrom(response$);
+      return response.data;
+    } catch (error) {
+      console.error(
+        'Error al hacer la petición HTTP:',
+        error?.response?.data || error.message,
+      );
+      throw error;
     }
   }
 }

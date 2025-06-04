@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Controlador } from './entities/controladore.entity';
 import { SensoresModule } from 'src/sensores/sensores.module';
 import { NombresSensoresModule } from 'src/nombres_sensores/nombres_sensores.module';
-
+import { HttpModule } from '@nestjs/axios';
 @Module({
   controllers: [ControladoresController],
   providers: [ControladoresService],
@@ -13,6 +13,7 @@ import { NombresSensoresModule } from 'src/nombres_sensores/nombres_sensores.mod
     TypeOrmModule.forFeature([Controlador]),
     SensoresModule,
     NombresSensoresModule,
+    HttpModule,
   ],
   exports: [ControladoresService],
 })
