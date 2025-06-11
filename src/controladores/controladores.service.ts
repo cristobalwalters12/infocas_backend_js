@@ -338,7 +338,7 @@ export class ControladoresService {
           'BLISTERA ROMACO 2 PR-TGHP-37': '/root/respaldo/UG65P2/37/',
           'BLISTERA MARCHESINI 2 PR-TGHP-38': '/root/respaldo/UG65P2/38/',
           'LÍNEA MANUAL 1 PR-TGHP-39': '/root/respaldo/UG65SUB/39/',
-          'PASILLO GRANULADOS PR-TGHP-40': '/root/respaldo/UG65P1/40/',
+          'PASILLO GRANULADOS PR-TGHP-40': '/root/respaldo/UG65P2/40/',
           'BODEGA DE LÍQUIDOS PR-TGHP-41': '/root/respaldo/UG65P1/41/',
           'ESTUCHADO P1 PR-TGHP-42': '/root/respaldo/UG65P1/42/',
           'ESTUCHADO P2 PR-TGHP-43': '/root/respaldo/UG65P1/43/',
