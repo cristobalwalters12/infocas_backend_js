@@ -3,6 +3,8 @@ import { CreateControladoreDto } from './dto/create-controladore.dto';
 import { FindControladoreDto } from './dto/find-controladore.dto';
 import { FindRespaldoControladoresDto } from './dto/find-respaldo-Controladores.dto';
 import { DownloadControladorDto } from './dto/download-controlador.dto';
+import { FindArchivoRespaldoControladoresDto } from './dto/find-archivo-Controladores.dto';
+import { DownloadGatewayDto } from './dto/dowload-gateway.dto';
 import { Controlador } from './entities/controladore.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -66,6 +68,36 @@ export class ControladoresService {
       }));
 
       return finalListado;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      await sftp.end();
+    }
+  }
+  async getArchivosControlador(
+    FindArchivoRespaldoControladoresDto: FindArchivoRespaldoControladoresDto,
+  ) {
+    const { controlador, carpeta } = FindArchivoRespaldoControladoresDto;
+    const sftp = new SftpClient();
+    try {
+      await sftp.connect({
+        host: this.configService.get('FTP_HOST'),
+        port: this.configService.get('FTP_PORT'),
+        username: this.configService.get('FTP_USER'),
+        password: this.configService.get('FTP_PASS'),
+      });
+
+      console.log('Conectado al servidor SFTP', controlador, carpeta);
+
+      const listado = await sftp.list(
+        '/root/respaldo/' + controlador + '/' + carpeta,
+      );
+      return listado.map((file) => ({
+        name: file.name,
+        size: file.size,
+        modifyTime: file.modifyTime,
+      }));
     } catch (err) {
       console.error(err);
       return err;
@@ -422,6 +454,38 @@ export class ControladoresService {
       });
 
       const remoteFilePath = `/root/respaldo/${controlador}/${archivo}`;
+
+      const fileContent = await sftp.get(remoteFilePath);
+      res.setHeader('Content-Type', 'application/octet-stream');
+      res.setHeader('Content-Disposition', `attachment; filename="${archivo}"`);
+      if (Buffer.isBuffer(fileContent) || typeof fileContent === 'string') {
+        res.send(fileContent);
+      } else {
+        throw new Error('Formato de archivo no soportado');
+      }
+    } catch (err) {
+      console.error('Error al descargar el archivo:', err);
+      res.status(500).json({ message: 'Error al descargar el archivo' });
+    } finally {
+      await sftp.end();
+    }
+  }
+  async descargarRespaldoGateway(
+    downloadGatewayDto: DownloadGatewayDto,
+    res: Response,
+  ) {
+    const { gateway, sensor, archivo } = downloadGatewayDto;
+    const sftp = new SftpClient();
+
+    try {
+      await sftp.connect({
+        host: this.configService.get('FTP_HOST'),
+        port: this.configService.get('FTP_PORT'),
+        username: this.configService.get('FTP_USER'),
+        password: this.configService.get('FTP_PASS'),
+      });
+
+      const remoteFilePath = `/root/respaldo/${gateway}/${sensor}/${archivo}`;
 
       const fileContent = await sftp.get(remoteFilePath);
       res.setHeader('Content-Type', 'application/octet-stream');

@@ -4,6 +4,8 @@ import { CreateControladoreDto } from './dto/create-controladore.dto';
 import { FindControladoreDto } from './dto/find-controladore.dto';
 import { FindRespaldoControladoresDto } from './dto/find-respaldo-Controladores.dto';
 import { DownloadControladorDto } from './dto/download-controlador.dto';
+import { FindArchivoRespaldoControladoresDto } from './dto/find-archivo-Controladores.dto';
+import { DownloadGatewayDto } from './dto/dowload-gateway.dto';
 import { Response } from 'express';
 @Controller('controladores')
 export class ControladoresController {
@@ -26,6 +28,17 @@ export class ControladoresController {
       findRespaldoControladoresDto,
     );
   }
+
+  @Post('/findArchivoControlador')
+  findArchivoControlador(
+    @Body()
+    findArchivoRespaldoControladoresDto: FindArchivoRespaldoControladoresDto,
+  ) {
+    return this.controladoresService.getArchivosControlador(
+      findArchivoRespaldoControladoresDto,
+    );
+  }
+
   @Post('/findControladorAndRespaldar')
   findOne(@Body() findControladoreDto: FindControladoreDto) {
     return this.controladoresService.respaldarTxt(findControladoreDto);
@@ -40,6 +53,17 @@ export class ControladoresController {
       res,
     );
   }
+  @Post('/downloadGateway')
+  async downloadGateway(
+    @Body() downloadGatewayDto: DownloadGatewayDto,
+    @Res() res: Response,
+  ) {
+    return this.controladoresService.descargarRespaldoGateway(
+      downloadGatewayDto,
+      res,
+    );
+  }
+
   @Post('/respaldarSensores2024')
   async respaldarSensores2024(
     @Body() findControladoreDto: FindControladoreDto,
