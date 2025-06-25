@@ -212,7 +212,7 @@ export class TaskService {
     fecha_inicio.setDate(fecha_inicio.getDate() - 14);
     const fecha_inicio_str: string = fecha_inicio.toISOString().split('T')[0];
     const fecha_fin_str: string = fecha_fin.toISOString().split('T')[0];
-    const controlador: string = 'UG65';
+    const controlador: string = 'UG65P1';
     try {
       await this.controladoresService.respaldo_Sensores2025({
         controlador,
