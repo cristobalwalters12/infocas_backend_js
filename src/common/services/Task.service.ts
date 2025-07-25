@@ -5,9 +5,11 @@ import { NombresSensoresService } from '../../nombres_sensores/nombres_sensores.
 import { ControladoresService } from '../../controladores/controladores.service';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
+import { Logger } from '@nestjs/common';
 
 @Injectable()
 export class TaskService {
+  private readonly logger = new Logger(TaskService.name);
   constructor(
     private sensoresService: SensoresService,
     private nombresSensoresService: NombresSensoresService,
@@ -17,6 +19,8 @@ export class TaskService {
 
   @Cron('0,30 12-22 * * 1-5')
   //@Cron('*/2 * * * 1-5')
+
+  //@Cron('0,30 * * * 1-5') es para pruebas
   async MailJob() {
     try {
       const timeZone = 'America/Santiago';
@@ -47,31 +51,31 @@ export class TaskService {
           startDateTime: formattedDate + ' ' + hourStart,
           endDateTime: formattedDate + ' ' + hourEnd,
         });
-        console.log('-------------------');
-        console.log(
+        this.logger.log('-------------------');
+        this.logger.log(
           `Resultado de la búsqueda: ${result.length} registros encontrados`,
         );
         if (result.length > 0) {
-          console.log('-------------------');
-          console.log(
+          this.logger.log('-------------------');
+          this.logger.log(
             `sensores con datos del sensor ${sensor.nombre_sensor} actualizados a la fecha ${formattedDate} con horas entre ${hourStart} y ${hourEnd}`,
           );
-          console.log('-------------------');
+          this.logger.log('-------------------');
         } else {
-          //if (sensor.nombre_sensor !== 'PATENTE CAMION KGFS86 PR-TGHP-63') {
-          sensoresSinDatos.push(sensor.nombre_sensor);
-          sensoressinDatosId.push(sensor.id_sensor);
-          //}
+          if (sensor.nombre_sensor !== 'SALA MUESTREO AM102') {
+            sensoresSinDatos.push(sensor.nombre_sensor);
+            sensoressinDatosId.push(sensor.id_sensor);
+          }
         }
       }
       for (const id of sensoressinDatosId) {
         const resultsId =
           await this.nombresSensoresService.findLastHourRegisters(id);
         dataForHTML.push(resultsId[0]);
-        console.log('-------------------');
-        console.log('sensores sin info actualizada a la fecha ');
-        console.log(resultsId);
-        console.log('-------------------');
+        this.logger.log('-------------------');
+        this.logger.log('sensores sin info actualizada a la fecha ');
+        this.logger.log(resultsId);
+        this.logger.log('-------------------');
       }
       if (sensoresSinDatos.length && sensoressinDatosId.length > 0) {
         const transporter = nodemailer.createTransport({
@@ -126,7 +130,7 @@ export class TaskService {
                 <div class="header">
                     <h1>Sensores sin datos</h1>
                     <div>
-                        <img src="https://www.infocas.cl/Infocas.png" alt="Logo" width="150">   
+                        <img src="https://www.infocas.cl/Infocas.png" alt="Logo" width="150">
                     </div>
                 </div>
                 <div class="content">
