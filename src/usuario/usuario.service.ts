@@ -55,6 +55,7 @@ export class UsuarioService {
       const { contraseña, correo, turnstileToken } = loginUserDto;
 
       await this.recaptchaService.validateToken(turnstileToken);
+      console.log('Token de reCAPTCHA validado correctamente');
       const usuario = await this.usuarioRepository.findOne({
         where: { correo: correo },
         select: [
@@ -64,8 +65,6 @@ export class UsuarioService {
           'rol',
           'vista_dashboard',
           'vista_sensores',
-          'vista_dashboard_presion_diferencial',
-          'vista_sensores_presion_diferencial',
         ],
       });
 
@@ -79,6 +78,7 @@ export class UsuarioService {
         throw new UnauthorizedException('La contraseña es incorrecta');
       }
       delete usuario.contraseña;
+      console.log('Usuario encontrado:', usuario);
       return {
         ...usuario,
 
