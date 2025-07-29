@@ -64,6 +64,8 @@ export class UsuarioService {
           'rol',
           'vista_dashboard',
           'vista_sensores',
+          'vista_dashboard_presion_diferencial',
+          'vista_sensores_presion_diferencial',
         ],
       });
 
