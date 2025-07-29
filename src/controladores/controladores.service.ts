@@ -34,6 +34,7 @@ export class ControladoresService {
     return await this.controladorRepository.find();
   }
 
+  // Obtiene las carpeta  respaldados en el servidor SFTP
   async getControladoresRespaldos(
     findRespaldoControladoresDto: FindRespaldoControladoresDto,
   ) {
@@ -75,6 +76,9 @@ export class ControladoresService {
       await sftp.end();
     }
   }
+
+  // Obtiene los archivos respaldados de un controlador específico por carpeta
+  // y devuelve un listado de archivos con nombre, tamaño y fecha de modificación
   async getArchivosControlador(
     FindArchivoRespaldoControladoresDto: FindArchivoRespaldoControladoresDto,
   ) {
@@ -106,6 +110,9 @@ export class ControladoresService {
     }
   }
 
+  // Descarga un archivo específico del servidor SFTP y lo envía como respuesta
+  //esto se debe cambiar ya que debemos generar un archivo por cada sensor
+  //Esto no va en lo de sensores de presion diferencial
   async respaldarTxt(findControladoreDto: FindControladoreDto) {
     const { controlador, startDateTime, endDateTime } = findControladoreDto;
 
@@ -332,7 +339,7 @@ export class ControladoresService {
 
         const rutasPersonalizadas: Record<string, string> = {
           'BODEGA SUB N1P4 PR-TGHP-01': '/root/respaldo/UG65SUB/01/',
-          'BODEGA SUB N2P4 PR-TGHP-02': '/root/respaldo/UG65SUB/02/',
+          'BODEGA SUB N2P13 PR-TGHP-02': '/root/respaldo/UG65SUB/02/',
           'BODEGA SUB N3P23 PR-TGHP-03': '/root/respaldo/UG65SUB/03/',
           'BODEGA SUB N4P33 PR-TGHP-04': '/root/respaldo/UG65SUB/04/',
           'BODEGA SUB N3P27 PR-TGHP-05': '/root/respaldo/UG65SUB/05/',

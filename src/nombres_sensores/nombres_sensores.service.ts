@@ -48,6 +48,7 @@ export class NombresSensoresService {
     }
     return array.flatMap((x) => x);
   }
+
   async findOnlyNames() {
     const query =
       'SELECT nombre_sensor FROM nombres_sensores ORDER BY RIGHT(nombre_sensor ,4) ASC';

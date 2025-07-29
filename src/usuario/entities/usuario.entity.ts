@@ -17,9 +17,15 @@ export class Usuario {
   @Column('varchar')
   rol: string;
 
-  @Column('boolean')
+  @Column('boolean', { default: false })
   vista_sensores: boolean;
 
-  @Column('boolean')
+  @Column('boolean', { default: false })
   vista_dashboard: boolean;
+
+  @Column('boolean', { default: false })
+  vista_sensores_presion_diferencial: boolean;
+
+  @Column('boolean', { default: false })
+  vista_dashboard_presion_diferencial: boolean;
 }

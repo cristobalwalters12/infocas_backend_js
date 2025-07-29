@@ -7,13 +7,13 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { NombresSensoresService } from './nombres_sensores.service';
+import { NombreSensoresPresionDiferencialService } from './nombre_sensores_presion_diferencial.service';
 import { Cron } from '@nestjs/schedule';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 @WebSocketGateway({
-  namespace: '/SupervisionSensores',
+  namespace: '/SupervisionSensoresPresionDiferencial',
   cors: {
     origin: (requestOrigin, callback) => {
       const corsOrigins = new ConfigService().get('CORS_ORIGIN').split(',');
@@ -27,20 +27,18 @@ import { ConfigService } from '@nestjs/config';
     credentials: true,
   },
 })
-export class SensoresGateway
+export class SensoresPresionDiferencialGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() server: Server;
-  private readonly logger = new Logger(SensoresGateway.name);
+  private readonly logger = new Logger(SensoresPresionDiferencialGateway.name);
 
   constructor(
-    private readonly nombresSensoresService: NombresSensoresService,
+    private readonly nombresSensoresService: NombreSensoresPresionDiferencialService,
   ) {}
 
   afterInit(server: Server) {
-    this.logger.log(
-      'WebSocket de sensores de temperatura y humedad initialized',
-    );
+    this.logger.log('WebSocket de sensores de presion diferencial initialized');
   }
 
   // Cuando un cliente se conecta, enviamos los datos automáticamente
@@ -64,7 +62,7 @@ export class SensoresGateway
   }
 
   // Esta función escucha el evento "requestSensorData" que los clientes pueden enviar
-  @SubscribeMessage('requestSensorData')
+  @SubscribeMessage('requestSensorPreDifData')
   async handleSensorData(client: Socket): Promise<void> {
     try {
       const sensorData = await this.nombresSensoresService.findIds();

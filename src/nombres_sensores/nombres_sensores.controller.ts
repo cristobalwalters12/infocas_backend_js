@@ -6,12 +6,12 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
+  // UseGuards,
 } from '@nestjs/common';
 import { NombresSensoresService } from './nombres_sensores.service';
 import { CreateNombresSensoreDto } from './dto/create-nombres_sensore.dto';
 import { UpdateNombresSensoreDto } from './dto/update-nombres_sensore.dto';
-import { AuthGuard } from '@nestjs/passport';
+//import { AuthGuard } from '@nestjs/passport';
 
 @Controller('nombres-sensores')
 export class NombresSensoresController {
@@ -36,7 +36,7 @@ export class NombresSensoresController {
   }
 
   @Get()
-  @UseGuards(AuthGuard('jwt'))
+  //@UseGuards(AuthGuard('jwt'))
   findAll() {
     return this.nombresSensoresService.findAll();
   }

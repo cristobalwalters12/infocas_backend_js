@@ -13,10 +13,16 @@ import { PingService } from './common/services/Ping.service';
 import { HistorialModule } from './historial/historial.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskService } from './common/services/Task.service';
+import { TaskServicePreDif } from './common/services/TasksPreDif.service';
 import { SensoresBackupModule } from './sensores-backup/sensores-backup.module';
 import { AppController } from './app.controller';
 import { RestTrackingMiddleware } from './common/middlewares/rest-Tracking.middleware';
 import { ControladoresModule } from './controladores/controladores.module';
+import { ControladoresPresionDiferencialModule } from './controladores_presion_diferencial/controladores_presion_diferencial.module';
+import { NombreSensoresPresionDiferencialModule } from './nombre_sensores_presion_diferencial/nombre_sensores_presion_diferencial.module';
+import { SensoresPresionDiferencialModule } from './sensores_presion_diferencial/sensores_presion_diferencial.module';
+import { SensoresBackupPresionDiferencialModule } from './sensores_backup_presion_diferencial/sensores_backup_presion_diferencial.module';
+import { HistorialPresionDiferencialModule } from './historial_presion_diferencial/historial_presion_diferencial.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -53,9 +59,14 @@ import { ControladoresModule } from './controladores/controladores.module';
     HistorialModule,
     SensoresBackupModule,
     ControladoresModule,
+    ControladoresPresionDiferencialModule,
+    NombreSensoresPresionDiferencialModule,
+    SensoresPresionDiferencialModule,
+    SensoresBackupPresionDiferencialModule,
+    HistorialPresionDiferencialModule,
   ],
   controllers: [AppController],
-  providers: [PingService, TaskService],
+  providers: [PingService, TaskService, TaskServicePreDif],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

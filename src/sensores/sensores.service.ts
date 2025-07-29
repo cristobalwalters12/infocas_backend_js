@@ -68,28 +68,44 @@ export class SensoresService {
   async findRangeInformation(informationDto: InformationDto) {
     const { nombreSensor, startDateTime, endDateTime } = informationDto;
 
+    const [fechaInicio, horaInicio] = startDateTime.split(' ');
+    const [fechaFin, horaFin] = endDateTime.split(' ');
+    console.table({ fechaInicio, horaInicio, fechaFin, horaFin });
     const query = `
-    SELECT 
-      sensores.*,
-      nombres_sensores.nombre_sensor,
-      CASE 
-        WHEN nombres_sensores.nombre_sensor = 'CAMARA FRIA CASINO PR-TGHP-65' THEN 0
-        ELSE sensores.humedad
-      END AS humedad
-    FROM sensores
-    INNER JOIN nombres_sensores ON nombres_sensores.id_sensor = sensores.id_sensor
-    WHERE nombres_sensores.nombre_sensor = ?
-      AND CONCAT(fecha, ' ', hora) BETWEEN ? AND ?
-    ORDER BY fecha, hora ASC
-  `;
+      SELECT *
+      FROM (
+        SELECT 
+          s.numero_registro,
+          s.id_sensor,
+          s.temperatura,
+          s.humedad,
+          s.fecha,
+          s.hora,
+          ns.nombre_sensor
+        FROM sensores s
+        INNER JOIN nombres_sensores ns ON ns.id_sensor = s.id_sensor
+        WHERE ns.nombre_sensor = ?
+      ) AS sub
+      WHERE (
+        sub.fecha > ?
+        OR (sub.fecha = ? AND sub.hora >= ?)
+      )
+      AND (
+        sub.fecha < ?
+        OR (sub.fecha = ? AND sub.hora <= ?)
+      )
+      ORDER BY sub.fecha ASC, sub.hora ASC;
+    `;
 
     const result = await this.sensoresRepository.query(query, [
-      nombreSensor,
-      startDateTime,
-      endDateTime,
+      nombreSensor, // ns.nombre_sensor = ?
+      fechaInicio, // sub.fecha > ?
+      fechaInicio, // sub.fecha = ?
+      horaInicio, // sub.hora >= ?
+      fechaFin, // sub.fecha < ?
+      fechaFin, // sub.fecha = ?
+      horaFin, // sub.hora <= ?
     ]);
-
-    //console.log(result);
 
     return result;
   }
