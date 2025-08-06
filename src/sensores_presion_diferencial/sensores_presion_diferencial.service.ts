@@ -63,20 +63,25 @@ export class SensoresPresionDiferencialService {
   ) {
     const { nombreSensorPresionDiferencial, startDateTime, endDateTime } =
       informationDto;
+    const [sensorInfo] =
+      await this.nombreSensoresPresionDiferencialService.findIdWithTheName(
+        nombreSensorPresionDiferencial,
+      );
+    const idSensor = sensorInfo?.id_sensor;
     const query = `
     SELECT MIN(Dif_Ch1) as minima_presion_diferencial_ch1,
            MAX(Dif_Ch1) as maxima_presion_diferencial_ch1,
            MIN(Dif_Ch2) as minima_presion_diferencial_ch2,
            MAX(Dif_Ch2) as maxima_presion_diferencial_ch2
     FROM sensores_pre_dif
-    INNER JOIN nombres_sensores_pre_dif ON nombres_sensores_pre_dif.id_sensor = sensores_pre_dif.id_sensor
-    WHERE nombres_sensores_pre_dif.nombre_sensor_pre_dif = ?
-      AND CONCAT(fecha, ' ', hora) BETWEEN ? AND ?
-    ORDER BY fecha, hora ASC
+    WHERE id_sensor = ? 
+      AND fecha_hora >=? 
+      AND fecha_hora <= ? 
+      ORDER BY fecha_hora ASC;
   `;
     const result = await this.sensoresPresionDiferencialRepository.query(
       query,
-      [nombreSensorPresionDiferencial, startDateTime, endDateTime],
+      [idSensor, startDateTime, endDateTime],
     );
 
     return result;

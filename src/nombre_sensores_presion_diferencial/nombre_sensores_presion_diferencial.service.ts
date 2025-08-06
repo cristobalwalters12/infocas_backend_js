@@ -42,7 +42,6 @@ export class NombreSensoresPresionDiferencialService {
   }
 
   async findIdWithTheName(nombreSensor: string) {
-    console.log(`Buscando ID para el sensor: ${nombreSensor}`);
     const query = `
       SELECT id_sensor, nombre_sensor_pre_dif
       FROM nombres_sensores_pre_dif
@@ -52,7 +51,7 @@ export class NombreSensoresPresionDiferencialService {
       query,
       [nombreSensor],
     );
-    console.log(result);
+
     return result;
   }
 
