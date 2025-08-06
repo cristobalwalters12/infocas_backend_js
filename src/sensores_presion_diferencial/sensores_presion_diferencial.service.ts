@@ -5,12 +5,14 @@ import { InformationDiferencialDto } from './dto/information-prediff-dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SensoresPresionDiferencial } from './entities/sensores_presion_diferencial.entity';
+import { NombreSensoresPresionDiferencialService } from 'src/nombre_sensores_presion_diferencial/nombre_sensores_presion_diferencial.service';
 
 @Injectable()
 export class SensoresPresionDiferencialService {
   constructor(
     @InjectRepository(SensoresPresionDiferencial)
     private sensoresPresionDiferencialRepository: Repository<SensoresPresionDiferencial>,
+    private readonly nombreSensoresPresionDiferencialService: NombreSensoresPresionDiferencialService,
   ) {}
   async create(
     createSensoresPresionDiferencialDto: CreateSensoresPresionDiferencialDto,
@@ -33,23 +35,28 @@ export class SensoresPresionDiferencialService {
   ) {
     const { nombreSensorPresionDiferencial, startDateTime, endDateTime } =
       informationDto;
-    const query = `
-    SELECT 
-      sensores_pre_dif.*,
-      nombres_sensores_pre_dif.nombre_sensor_pre_dif
-    FROM sensores_pre_dif
-    INNER JOIN nombres_sensores_pre_dif ON nombres_sensores_pre_dif.id_sensor = sensores_pre_dif.id_sensor
-    WHERE nombres_sensores_pre_dif.nombre_sensor_pre_dif = ?
-      AND CONCAT(fecha, ' ', hora) BETWEEN ? AND ?
-    ORDER BY fecha, hora ASC
-  `;
 
+    console.log(
+      `Buscando datos del sensor: ${nombreSensorPresionDiferencial} desde ${startDateTime} hasta ${endDateTime}`,
+    );
+    const [sensorInfo] =
+      await this.nombreSensoresPresionDiferencialService.findIdWithTheName(
+        nombreSensorPresionDiferencial,
+      );
+    const idSensor = sensorInfo?.id_sensor;
+    const nombreSensor = sensorInfo?.nombre_sensor_pre_dif;
+    const query = `
+      SELECT *  FROM sensores_pre_dif
+      WHERE id_sensor = ? 
+      AND fecha_hora >=? 
+      AND fecha_hora <= ? 
+      ORDER BY fecha_hora ASC;
+  `;
     const result = await this.sensoresPresionDiferencialRepository.query(
       query,
-      [nombreSensorPresionDiferencial, startDateTime, endDateTime],
+      [idSensor, startDateTime, endDateTime],
     );
-
-    return result;
+    return { result, nombreSensor };
   }
   async findPressureDifferentialRange(
     informationDto: InformationDiferencialDto,

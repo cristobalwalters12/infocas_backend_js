@@ -53,9 +53,9 @@ export class TaskServicePreDif {
           );
         console.log('-------------------');
         console.log(
-          `Resultado de la búsqueda: ${result.length} registros encontrados`,
+          `Resultado de la búsqueda: ${result.result.length} registros encontrados`,
         );
-        if (result.length > 0) {
+        if (result.result && result.result.length > 0) {
           console.log('-------------------');
           console.log(
             `sensores con datos del sensor ${sensor.nombre_sensor_pre_dif} actualizados a la fecha ${formattedDate} con horas entre ${hourStart} y ${hourEnd}`,
