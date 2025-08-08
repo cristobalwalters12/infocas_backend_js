@@ -477,6 +477,9 @@ export class ControladoresService {
       await sftp.end();
     }
   }
+  // archivo: "VALOR_MEDIO_CONTROL_UMA_34-2025-08-07-Web.txt"
+  //gateway: "UG65P1"
+  //sensor: "valor medio control UMA 34"
   async descargarRespaldoGateway(
     downloadGatewayDto: DownloadGatewayDto,
     res: Response,

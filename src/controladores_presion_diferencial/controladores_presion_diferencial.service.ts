@@ -10,9 +10,9 @@ import { SensoresPresionDiferencialService } from '../sensores_presion_diferenci
 import { FindRespaldoControladoresPreDifDto } from './dto/find-respaldo-controladores-predif.dto';
 import { FindArchivoRespaldoControladoresPreDifDto } from './dto/find-archivo-controladores-predif.dto';
 import { FindControladorePreDifDto } from './dto/find-controladores-predif.dto';
-//import { lastValueFrom } from 'rxjs';
+import { DownloadGatewayDto } from './dto/download-gateway.dto';
 import * as SftpClient from 'ssh2-sftp-client';
-//import { Response } from 'express';
+import { Response } from 'express';
 @Injectable()
 export class ControladoresPresionDiferencialService {
   constructor(
@@ -29,11 +29,11 @@ export class ControladoresPresionDiferencialService {
   ) {
     return createControladoresPresionDiferencialDto;
   }
-
+  // Con esto se obtiene el listado de controladores
   async findAll() {
     return await this.controladoresPresionDiferencialRepository.find();
   }
-
+  // con esto se obtiene un controlador por id
   async getControladoresRespaldoPreDif(
     findRespaldoControladoresPreDifDto: FindRespaldoControladoresPreDifDto,
   ) {
@@ -60,6 +60,7 @@ export class ControladoresPresionDiferencialService {
       throw new Error('No se pudieron obtener los respaldos de controladores');
     }
   }
+  // con esto se obtiene los archivos de un controlador
   async getArchivosControlador(
     findArchivoRespaldoControladoresPreDifDto: FindArchivoRespaldoControladoresPreDifDto,
   ) {
@@ -199,6 +200,37 @@ export class ControladoresPresionDiferencialService {
       }
     } catch (error) {
       console.error('Error al subir archivos mediante SFTP:', error);
+    } finally {
+      await sftp.end();
+    }
+  }
+  async descargarRespaldoGateway(
+    downloadGatewayDto: DownloadGatewayDto,
+    res: Response,
+  ) {
+    const { gateway, sensor, archivo } = downloadGatewayDto;
+    const sftp = new SftpClient();
+
+    try {
+      await sftp.connect({
+        host: this.configService.get('FTP_HOST'),
+        port: this.configService.get('FTP_PORT'),
+        username: this.configService.get('FTP_USER'),
+        password: this.configService.get('FTP_PASS'),
+      });
+
+      const remoteFilePath = `/root/respaldo/presion_diferencial/${gateway}/${sensor}/${archivo}`;
+      const fileContent = await sftp.get(remoteFilePath);
+      res.setHeader('Content-Type', 'application/octet-stream');
+      res.setHeader('Content-Disposition', `attachment; filename="${archivo}"`);
+      if (Buffer.isBuffer(fileContent) || typeof fileContent === 'string') {
+        res.send(fileContent);
+      } else {
+        throw new Error('Formato de archivo no soportado');
+      }
+    } catch (err) {
+      console.error('Error al descargar el archivo:', err);
+      res.status(500).json({ message: 'Error al descargar el archivo' });
     } finally {
       await sftp.end();
     }
