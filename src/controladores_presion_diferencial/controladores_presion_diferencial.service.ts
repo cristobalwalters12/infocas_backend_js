@@ -91,6 +91,7 @@ export class ControladoresPresionDiferencialService {
   ) {
     const { controlador, startDateTime, endDateTime } =
       findControladorePreDifDto;
+    console.log('Controlador:', controlador);
     try {
       const controladorEncontrado =
         await this.controladoresPresionDiferencialRepository.findOne({
@@ -107,21 +108,99 @@ export class ControladoresPresionDiferencialService {
       const resultados = await Promise.all(
         sensoresPreDif.map(async (sensor: any) => {
           const nombreSensorPresionDiferencial = sensor.nombre_sensor_pre_dif;
-          return await this.sensoresPresionDiferencialService.findPressureDifferentialRange(
-            {
-              nombreSensorPresionDiferencial,
-              startDateTime,
-              endDateTime,
-            },
-          );
+          const result =
+            await this.sensoresPresionDiferencialService.findRangeInformationPressureDifferential(
+              {
+                nombreSensorPresionDiferencial,
+                startDateTime,
+                endDateTime,
+              },
+            );
+          return {
+            nombre_sensor: nombreSensorPresionDiferencial,
+            result: result.result,
+          };
         }),
       );
-      const datos = resultados.flat();
-
-      console.log('Datos obtenidos:', datos);
+      const datos = resultados.flatMap((item) =>
+        item.result.map((registro: any) => ({
+          ...registro,
+          nombre_sensor: item.nombre_sensor,
+        })),
+      );
+      await this.generarArchivosPorSensor(datos);
     } catch (error) {
       console.error('Error al buscar el controlador:', error);
       throw new Error('Controlador no encontrado');
+    }
+  }
+  private async generarArchivosPorSensor(datos: any[]) {
+    const datosAgrupados: Record<string, any[]> = {};
+
+    // Agrupar datos por nombre_sensor
+    datos.forEach((dato) => {
+      if (!datosAgrupados[dato.nombre_sensor]) {
+        datosAgrupados[dato.nombre_sensor] = [];
+      }
+      datosAgrupados[dato.nombre_sensor].push(dato);
+    });
+
+    const sftp = new SftpClient();
+
+    try {
+      await sftp.connect({
+        host: this.configService.get('FTP_HOST'),
+        port: this.configService.get('FTP_PORT'),
+        username: this.configService.get('FTP_USER'),
+        password: this.configService.get('FTP_PASS'),
+      });
+
+      for (const [nombreSensor, registros] of Object.entries(datosAgrupados)) {
+        const contenidoTXT = registros
+          .map((registro) => {
+            const deviceName = nombreSensor
+              .replace(/^.*?PR-TGHP-/, 'PR-TGHP ')
+              .trim();
+
+            const fecha =
+              registro.fecha instanceof Date
+                ? registro.fecha.toISOString().split('T')[0]
+                : registro.fecha;
+
+            const time = `${fecha} ${registro.hora}`;
+
+            return JSON.stringify({
+              deviceName,
+              ch1: registro.Dif_Ch1,
+              ch2: registro.Dif_Ch2,
+              time,
+            });
+          })
+          .join('\n');
+
+        // Usa la misma lógica de rutas o ajusta según estos sensores
+        const rutasPersonalizadas: Record<string, string> = {
+          'DIF 34': '/root/respaldo/presion_diferencial/UG65/DIF 34/',
+          // Agrega más sensores si es necesario
+        };
+
+        const fechaArchivo = new Date(Date.now() - 3 * 60 * 60 * 1000)
+          .toISOString()
+          .split('T')[0];
+
+        const nombreArchivo: string = `${nombreSensor.replace(/ /g, '_')}-${fechaArchivo}-Web.txt`;
+        const directorioBase =
+          rutasPersonalizadas[nombreSensor] || '/root/respaldo/otros/';
+        const rutaRemota: string = `${directorioBase}${nombreArchivo}`;
+
+        await sftp.put(Buffer.from(contenidoTXT), rutaRemota);
+
+        console.log(`Archivo subido para ${nombreSensor}: ${rutaRemota}`);
+      }
+    } catch (error) {
+      console.error('Error al subir archivos mediante SFTP:', error);
+    } finally {
+      await sftp.end();
     }
   }
 

@@ -15,7 +15,7 @@ export class TaskServicePreDif {
     private controladoresPresionDiferencialService: ControladoresPresionDiferencialService,
   ) {}
 
-  //@Cron('0,30 12-22 * * 1-5')
+  @Cron('0,30 12-22 * * 1-5')
   //@Cron('*/2 * * * 1-5')
   async MailJob() {
     try {
@@ -178,20 +178,20 @@ export class TaskServicePreDif {
     }
   }
 
-  @Cron('0 30 3 * *  1-7')
+  @Cron('0 55 3 * *  1-7')
   async respaldoSensoresUG65() {
-    //const fecha_fin: Date = new Date();
+    const fecha_fin: Date = new Date();
     const fecha_inicio: Date = new Date();
     fecha_inicio.setDate(fecha_inicio.getDate() - 14);
-    //const fecha_inicio_str: string = fecha_inicio.toISOString().split('T')[0];
-    ////const fecha_fin_str: string = fecha_fin.toISOString().split('T')[0];
-    //const controlador: string = 'UG65P1';
+    const fecha_inicio_str: string = fecha_inicio.toISOString().split('T')[0];
+    const fecha_fin_str: string = fecha_fin.toISOString().split('T')[0];
+    const controlador: string = 'UG65';
     try {
-      // await this.controladoresService.respaldo_Sensores2025({
-      //  controlador,
-      //  startDateTime: fecha_inicio_str,
-      //  endDateTime: fecha_fin_str,
-      // });
+      await this.controladoresPresionDiferencialService.respaldoSensoresPreDif({
+        controlador,
+        startDateTime: fecha_inicio_str,
+        endDateTime: fecha_fin_str,
+      });
     } catch (error) {
       console.error('Error al obtener nombres de sensores:', error);
     }
