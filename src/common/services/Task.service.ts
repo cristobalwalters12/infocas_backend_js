@@ -36,10 +36,10 @@ export class TaskService {
       console.log(`Fecha ajustada a ${timeZone}: ${formattedDate}`);
       const sensores = await this.nombresSensoresService.findAll();
       const now = new Date();
-      now.setHours(now.getHours() - 5);
+      now.setHours(now.getHours() - 4);
       const hourStart: string = now.toTimeString().split(' ')[0];
       const current = new Date();
-      current.setHours(current.getHours() - 4);
+      current.setHours(current.getHours() - 3);
       const hourEnd: string = current.toTimeString().split(' ')[0];
       const sensoresSinDatos: string[] = [];
       const sensoressinDatosId: number[] = [];
